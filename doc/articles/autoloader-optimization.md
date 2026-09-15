@@ -6,125 +6,132 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: Como reduzir o impacto no desempenho do carregador automático
+tagline: Como reduzir o impacto do autoloader no desempenho
 
-source_url: https://github.com/composer/composer/blob/2.8/doc/articles/autoloader-optimization.md
-revision: 0d236858eca397f7d910533580b0d3a4944444dd
-status: wip
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/autoloader-optimization.md
+source_revision: e58aad45b51c6b29b9f47800a182d7e86e654201
+translation_status: ready
 ---
 
-# Otimização do carregador automático
+# Otimização do autoloader
 
-Por padrão, o carregador automático do Composer é executado relativamente
-rápido.
-No entanto, devido à forma como as regras de carregamento automático da PSR-4 e
-da PSR-0 são configuradas, é necessário verificar o sistema de arquivos antes de
-resolver um nome de classe de forma conclusiva.
-Isso torna as coisas um pouco mais lentas, mas é conveniente em ambientes de
-desenvolvimento porque quando uma nova classe é adicionada, ela pode ser
-descoberta/usada imediatamente sem a necessidade de reconstruir a configuração
-do carregador automático.
+Por padrão, o autoloader do Composer é relativamente rápido.
+No entanto, devido à forma como as regras de autoloading PSR-4 e PSR-0 são
+configuradas, ele precisa verificar o sistema de arquivos antes de resolver
+definitivamente o nome de uma classe.
+Isso reduz um pouco a velocidade, mas é conveniente em ambientes de
+desenvolvimento, pois, ao adicionar uma nova classe, ela pode ser imediatamente
+detectada e utilizada sem a necessidade de reconstruir a configuração do
+autoloader.
 
-O problema, entretanto, é que em produção geralmente queremos que as coisas
-aconteçam o mais rápido possível, pois podemos reconstruir a configuração toda
-vez que implantamos e novas classes não aparecem aleatoriamente entre as
-implantações.
+O problema, entretanto, é que em produção geralmente queremos que tudo ocorra o
+mais rápido possível, já que é possível reconstruir a configuração a cada
+implantação e novas classes não surgem aleatoriamente entre as implantações.
 
-Por isso, o Composer oferece algumas estratégias para otimizar o carregador
-automático.
+Por isso, o Composer oferece algumas estratégias para otimizar o autoloader.
 
-> **Nota:** Essas otimizações **não devem** ser habilitadas em
-> **desenvolvimento**, pois todas elas causarão vários problemas ao
-> adicionar/remover classes.
-> Os ganhos de desempenho não compensam o esforço em um ambiente de
+> **Nota:** Você **não deve** habilitar nenhuma dessas otimizações em ambientes
+> de **desenvolvimento**, pois todas elas causarão diversos problemas ao
+> adicionar ou remover classes.
+> Os ganhos de desempenho não compensam os transtornos em um cenário de
 > desenvolvimento.
 
-## Otimização Nível 1: Geração de mapa de classe
+## Otimização nível 1: geração de mapa de classes
 
-### Como executá-la?
+### Como habilitá-la?
 
 Existem algumas opções para habilitar isso:
 
-- Definir `"optimize-autoloader": true` dentro da chave de configuração do
+- Defina `"optimize-autoloader": true` dentro da chave de configuração do
   `composer.json`.
-- Executar `install` ou `update` com `-o` ou `--optimize-autoloader`.
-- Executar `dump-autoload` com `-o` ou `--optimize`.
+- Execute `install` ou `update` com a flag `-o` ou `--optimize-autoloader`.
+- Execute `dump-autoload` com a flag `-o` ou `--optimize`.
 
-### What does it do?
+### O que isso faz?
 
-Class map generation essentially converts PSR-4/PSR-0 rules into classmap rules.
-This makes everything quite a bit faster as for known classes the class map
-returns instantly the path, and Composer can guarantee the class is in there so
-there is no filesystem check needed.
+A geração do mapa de classes essencialmente converte regras PSR-4/PSR-0 em
+regras de mapa de classes.
+Isso torna tudo bem mais rápido, pois, para classes conhecidas, o mapa de
+classes retorna o caminho instantaneamente; como o Composer garante que a classe
+está lá, não é necessária nenhuma verificação no sistema de arquivos.
 
-On PHP 5.6+, the class map is also cached in opcache which improves the initialization
-time greatly. If you make sure opcache is enabled, then the class map should load
-almost instantly and then class loading is fast.
+No PHP 5.6 ou superior, o mapa de classes também é armazenado em cache no
+opcache, o que melhora significativamente o tempo de inicialização.
+Se você garantir que o opcache esteja habilitado, o mapa de classes deverá ser
+carregado quase instantaneamente, tornando o carregamento de classes rápido.
 
-### Trade-offs
+### Considerações
 
-There are no real trade-offs with this method. It should always be enabled in
-production.
+Não há desvantagens reais com esse método.
+Ele deve estar sempre habilitado em produção.
 
-The only issue is it does not keep track of autoload misses (i.e., when
-it cannot find a given class), so those fallback to PSR-4 rules and can still
-result in slow filesystem checks. To solve this issue two Level 2 optimization
-options exist, and you can decide to enable either if you have a lot of
-class_exists checks that are done for classes that do not exist in your project.
+O único problema é que ele não registra falhas de carregamento (ou seja, quando
+não consegue encontrar uma determinada classe); nesses casos, o sistema recorre
+às regras PSR-4, o que ainda pode resultar em verificações lentas no sistema de
+arquivos.
+Para resolver esse problema, existem duas opções de otimização de nível 2, e
+você pode optar por habilitar uma delas caso realize muitas verificações
+`class_exists` para classes que não existem no seu projeto.
 
-## Optimization Level 2/A: Authoritative class maps
+## Otimização de nível 2/A: mapas de classes autoritativos
 
-### How to run it?
+### Como habilitá-la?
 
-There are a few options to enable this:
+Existem algumas opções para habilitar isso:
 
-- Set `"classmap-authoritative": true` inside the config key of composer.json
-- Call `install` or `update` with `-a` / `--classmap-authoritative`
-- Call `dump-autoload` with `-a` / `--classmap-authoritative`
+- Defina `"classmap-authoritative": true` dentro da chave `config` do
+  `composer.json`.
+- Execute `install` ou `update` com a flag `-a` / `--classmap-authoritative`.
+- Execute `dump-autoload` com a flag `-a` / `--classmap-authoritative`.
 
-### What does it do?
+### O que isso faz?
 
-Enabling this automatically enables Level 1 class map optimizations.
+Habilitar essa opção habilita automaticamente as otimizações de *mapa de
+classes* de nível 1.
 
-This option says that if something is not found in the classmap,
-then it does not exist and the carregador automático should not attempt to look on the
-filesystem according to PSR-4 rules.
+Essa opção determina que, se algo não for encontrado no *mapa de classes*, então
+o item não existe e o autoloader não deve tentar procurá-lo no sistema de
+arquivos seguindo as regras da PSR-4.
 
-### Trade-offs
+### Considerações
 
-This option makes the carregador automático always return very quickly. On the flipside it
-also means that in case a class is generated at runtime for some reason, it will
-not be allowed to be autoloaded. If your project or any of your dependencies does that
-then you might experience "class not found" issues in production. Enable this with care.
+Essa opção faz com que o autoloader retorne sempre muito rapidamente.
+Por outro lado, isso também significa que, caso uma classe seja gerada em tempo
+de execução por algum motivo, ela não poderá ser carregada automaticamente.
+Se o seu projeto ou alguma de suas dependências fizer isso, você poderá
+enfrentar problemas de "classe não encontrada" em produção.
+Habilite isso com cautela.
 
-> Note: This cannot be combined with Level 2/B optimizations. You have to choose one as
-> they address the same issue in different ways.
+> Nota: Isso não pode ser combinado com as otimizações de nível 2/B.
+> Você deve escolher uma delas, pois ambas abordam o mesmo problema de maneiras
+> diferentes.
 
-## Optimization Level 2/B: APCu cache
+## Otimização de nível 2/B: cache APCu
 
-### How to run it?
+### Como habilitá-la?
 
-There are a few options to enable this:
+Existem algumas opções para habilitar isso:
 
-- Set `"apcu-carregador automático": true` inside the config key of composer.json
-- Call `install` or `update` with `--apcu-carregador automático`
-- Call `dump-autoload` with `--apcu`
+- Defina `"apcu-autoloader": true` dentro da chave `config` do `composer.json`.
+- Execute `install` ou `update` com `--apcu-autoloader`.
+- Execute `dump-autoload` com `--apcu`.
 
-### What does it do?
+### O que isso faz?
 
-This option adds an APCu cache as a fallback for the class map. It will not
-automatically generate the class map though, so you should still enable Level 1
-optimizations manually if you so desire.
+Essa opção adiciona um cache APCu como fallback para o mapa de classes.
+No entanto, ela não gera automaticamente o mapa de classes; portanto, você ainda
+deve habilitar as otimizações de nível 1 manualmente, se desejar.
 
-Whether a class is found or not, that fact is always cached in APCu, so it can be
-returned quickly on the next request.
+Independentemente de uma classe ser encontrada ou não, essa informação é sempre
+armazenada em cache na APCu, permitindo um retorno rápido na próxima requisição.
 
-### Trade-offs
+### Considerações
 
-This option requires APCu which may or may not be available to you. It also
-uses APCu memory for autoloading purposes, but it is safe to use and cannot
-result in classes not being found like the authoritative class map
-optimization above.
+Essa opção requer a APCu, que pode ou não estar disponível para você.
+Ela também utiliza memória APCu para fins de autoloading, mas seu uso é seguro e
+não resulta em classes não encontradas, ao contrário da otimização de mapa de
+classes autoritativo mencionada anteriormente.
 
-> Note: This cannot be combined with Level 2/A optimizations. You have to choose one as
-> they address the same issue in different ways.
+> Nota: Isso não pode ser combinado com as otimizações de nível 2/A.
+> Você deve escolher uma delas, pois ambas abordam o mesmo problema de maneiras
+> diferentes.
