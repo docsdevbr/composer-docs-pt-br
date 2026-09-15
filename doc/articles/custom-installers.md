@@ -6,50 +6,58 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: Modify the way certain types of packages are installed
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/custom-installers.md
+source_revision: d76813b309c2ad2e992f4f72dc697017c374f1be
+translation_status: ready
+
+tagline: Modifique a maneira como certos tipos de pacotes são instalados.
 ---
 
-# Setting up and using custom installers
+# Configurando e utilizando instaladores personalizados
 
-## Synopsis
+## Visão geral
 
-At times, it may be necessary for a package to require additional actions during
-installation, such as installing packages outside of the default `vendor`
-library.
+Às vezes, pode ser necessário que um pacote exija ações adicionais durante a
+instalação, como instalar pacotes fora da biblioteca `vendor` padrão.
 
-In these cases you could consider creating a Custom Installer to handle your
-specific logic.
+Nesses casos, você pode considerar a criação de um instalador personalizado para
+lidar com sua lógica específica.
 
-## Alternative to custom installers with Composer 2.1+
+## Alternativa a instaladores personalizados com o Composer 2.1+
 
-As of Composer 2.1, the `Composer\InstalledVersions` class has a
-[`getInstalledPackagesByType`](https://getcomposer.org/doc/07-runtime.md#knowing-which-packages-of-a-given-type-are-installed)
-method which can let you figure out at runtime which plugins/modules/extensions are installed.
+A partir do Composer 2.1, a classe `Composer\InstalledVersions` conta com o
+método
+[`getInstalledPackagesByType`](../07-runtime.md#saber-quais-pacotes-de-um-determinado-tipo-estão-instalados),
+que permite identificar, em tempo de execução, quais plugins, módulos ou
+extensões estão instalados.
 
-It is highly recommended to use that instead of building new custom
-installers if you are building a new application. This has the advantage of leaving
-all vendor code in the vendor directory, and not requiring custom installer code.
+Se você estiver desenvolvendo uma nova aplicação, recomenda-se fortemente
+utilizar essa abordagem em vez de criar novos instaladores personalizados.
+Isso oferece a vantagem de manter todo o código de terceiros no diretório
+`vendor`, dispensando a necessidade de código para instaladores personalizados.
 
-## Calling a Custom Installer
+## Chamando um instalador personalizado
 
-Suppose that your project already has a Custom Installer for specific modules
-then invoking that installer is a matter of defining the correct [type][1] in
-your package file.
+Suponha que seu projeto já possua um instalador personalizado para módulos
+específicos; nesse caso, invocar esse instalador é uma questão de definir o
+[tipo][1] correto no arquivo do seu pacote.
 
-> _See the next chapter for an instruction how to create Custom Installers._
+> _Consulte o próximo capítulo para obter instruções sobre como criar
+> instaladores personalizados._
 
-Every Custom Installer defines which [type][1] string it will recognize. Once
-recognized it will completely override the default installer and only apply its
-own logic.
+Todo instalador personalizado define qual string de [tipo][1] ele reconhecerá.
+Uma vez reconhecido, ele substituirá completamente o instalador padrão e
+aplicará apenas a sua própria lógica.
 
-An example use-case would be:
+Um exemplo de caso de uso seria:
 
-> phpDocumentor features Templates that need to be installed outside of the
-> default /vendor folder structure. As such they have chosen to adopt the
-> `phpdocumentor-template` [type][1] and create a plugin providing the Custom
-> Installer to send these templates to the correct folder.
+> O phpDocumentor possui Templates que precisam ser instalados fora da estrutura
+> de pastas padrão `/vendor`.
+> Por isso, optaram por adotar o [tipo][1] `phpdocumentor-template` e criar um
+> plugin que fornece o instalador personalizado para enviar esses templates para
+> a pasta correta.
 
-An example composer.json of such a template package would be:
+Um exemplo de `composer.json` para tal pacote de template seria:
 
 ```json
 {
@@ -61,33 +69,36 @@ An example composer.json of such a template package would be:
 }
 ```
 
-> **IMPORTANT**: to make sure that the template installer is present at the
-> time the template package is installed, template packages should require
-> the plugin package.
+> **IMPORTANTE**: para garantir que o instalador de template esteja presente no
+> momento em que o pacote de template for instalado, os pacotes de template
+> devem declarar o pacote do plugin como dependência.
 
-## Creating an Installer
+## Criando um instalador
 
-A Custom Installer is defined as a class that implements the
-[`Composer\Installer\InstallerInterface`][4] and is usually distributed in a
-Composer Plugin.
+Um instalador personalizado é definido como uma classe que implementa a
+interface [`Composer\Installer\InstallerInterface`][4] e é geralmente
+distribuído em um plugin do Composer.
 
-A basic Installer Plugin would thus compose of three files:
+Um plugin de instalador básico seria composto, portanto, por três arquivos:
 
-1. the package file: composer.json
-2. The Plugin class, e.g.: `My\Project\Composer\Plugin.php`, containing a class that implements `Composer\Plugin\PluginInterface`.
-3. The Installer class, e.g.: `My\Project\Composer\Installer.php`, containing a class that implements `Composer\Installer\InstallerInterface`.
+1. O arquivo do pacote: `composer.json`.
+2. A classe do plugin, ex.: `My\Project\Composer\Plugin.php`, contendo uma
+   classe que implementa `Composer\Plugin\PluginInterface`.
+3. A classe do instalador, ex.: `My\Project\Composer\Installer.php`, contendo
+   uma classe que implementa `Composer\Installer\InstallerInterface`.
 
 ### composer.json
 
-The package file is the same as any other package file but with the following
-requirements:
+O arquivo do pacote é igual a qualquer outro arquivo de pacote, mas com os
+seguintes requisitos:
 
-1. the [type][1] attribute must be `composer-plugin`.
-2. the [extra][2] attribute must contain an element `class` defining the
-   class name of the plugin (including namespace). If a package contains
-   multiple plugins, this can be an array of class names.
+1. O atributo [type][1] deve ser `composer-plugin`.
+2. O atributo [extra][2] deve conter um elemento `class` definindo o nome da
+   classe do plugin (incluindo o namespace).
+   Se um pacote contiver múltiplos plugins, este pode ser um array de nomes de
+   classes.
 
-Example:
+Exemplo:
 
 ```json
 {
@@ -109,19 +120,21 @@ Example:
 }
 ```
 
-The example above has Composer itself in its require-dev, which allows you to use
-the Composer classes in your test suite for example.
+O exemplo acima inclui o próprio Composer em seu `require-dev`, o que permite
+utilizar as classes do Composer em sua suíte de testes, por exemplo.
 
-### The Plugin class
+### A classe do plugin
 
-The class defining the Composer plugin must implement the
-[`Composer\Plugin\PluginInterface`][3]. It can then register the Custom
-Installer in its `activate()` method.
+A classe que define o plugin do Composer deve implementar a interface
+[`Composer\Plugin\PluginInterface`][3].
+Ela pode, então, registrar o instalador personalizado em seu método
+`activate()`.
 
-The class may be placed in any location and have any name, as long as it is
-autoloadable and matches the `extra.class` element in the package definition.
+A classe pode estar localizada em qualquer lugar e ter qualquer nome, desde que
+seja acessível via autoload e corresponda ao elemento `extra.class` na
+definição do pacote.
 
-Example:
+Exemplo:
 
 ```php
 <?php
@@ -142,32 +155,35 @@ class TemplateInstallerPlugin implements PluginInterface
 }
 ```
 
-### The Custom Installer class
+### A classe do instalador personalizado
 
-The class that executes the custom installation should implement the
-[`Composer\Installer\InstallerInterface`][4] (or extend another installer that
-implements that interface). It defines the [type][1] string as it will be
-recognized by packages that will use this installer in the `supports()` method.
+A classe que executa a instalação personalizada deve implementar a interface
+[`Composer\Installer\InstallerInterface`][4] (ou estender outro instalador que
+implemente essa interface).
+Ela define, no método `supports()`, a string de [tipo][1] pela qual será
+reconhecida pelos pacotes que utilizarão este instalador.
 
-> **NOTE**: _choose your [type][1] name carefully, it is recommended to follow
-> the format: `vendor-type`_. For example: `phpdocumentor-template`.
+> **NOTA**: _escolha o nome do seu [tipo][1] com cuidado; recomenda-se seguir
+> o formato: `vendor-type`_.
+> Por exemplo: `phpdocumentor-template`.
 
-The InstallerInterface class defines the following methods (please see the
-source for the exact signature):
+A interface `InstallerInterface` define os seguintes métodos (consulte o
+código-fonte para ver a assinatura exata):
 
-* **supports()**, here you test whether the passed [type][1] matches the name
-  that you declared for this installer (see the example).
-* **isInstalled()**, determines whether a supported package is installed or not.
-* **install()**, here you can determine the actions that need to be executed
-  upon installation.
-* **update()**, here you define the behavior that is required when Composer is
-  invoked with the update argument.
-* **uninstall()**, here you can determine the actions that need to be executed
-  when the package needs to be removed.
-* **getInstallPath()**, this method should return the absolute path where the
-  package is to be installed. The path _must not end with a slash._
+* **supports()**, aqui você verifica se o [tipo][1] fornecido corresponde ao
+  nome que você declarou para este instalador (veja o exemplo).
+* **isInstalled()**, determina se um pacote suportado está instalado ou não.
+* **install()**, aqui você pode determinar as ações que precisam ser executadas
+  durante a instalação.
+* **update()**, aqui você define o comportamento necessário quando o Composer é
+  invocado com o argumento `update`.
+* **uninstall()**, aqui você pode determinar as ações que precisam ser
+  executadas quando o pacote precisar ser removido.
+* **getInstallPath()**, este método deve retornar o caminho absoluto onde o
+  pacote será instalado.
+  O caminho _não deve terminar com uma barra._
 
-Example:
+Exemplo:
 
 ```php
 <?php
@@ -206,13 +222,13 @@ class TemplateInstaller extends LibraryInstaller
 }
 ```
 
-The example demonstrates that it is possible to extend the
-[`Composer\Installer\LibraryInstaller`][5] class to strip a prefix
-(`phpdocumentor/template-`) and use the remaining part to assemble a completely
-different installation path.
+O exemplo demonstra que é possível estender a classe
+[`Composer\Installer\LibraryInstaller`][5] para remover um prefixo
+(`phpdocumentor/template-`) e utilizar a parte restante para montar um caminho
+de instalação completamente diferente.
 
-> _Instead of being installed in `/vendor` any package installed using this
-> Installer will be put in the `/data/templates/<stripped name>` folder._
+> _Em vez de ser instalado em `/vendor`, qualquer pacote instalado utilizando
+> este instalador será colocado na pasta `/data/templates/<nome_sem_prefixo>`._
 
 [1]: ../04-schema.md#type
 [2]: ../04-schema.md#extra
