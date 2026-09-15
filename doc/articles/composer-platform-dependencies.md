@@ -6,27 +6,39 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: Making your package depend on specific Composer versions
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/composer-platform-dependencies.md
+source_revision: 6198fc1053ede6af9b401a75f4badf0311d2adc1
+translation_status: ready
+
+tagline: Fazendo seu pacote depender de versões específicas do Composer
 ---
 
-# Composer platform dependencies
+# Dependências de plataforma do Composer
 
-## What are platform dependencies
+## O que são dependências de plataforma
 
-Composer makes information about the environment Composer runs in available as virtual packages. This allows other
-packages to define dependencies ([require](../04-schema.md#require), [conflict](../04-schema.md#conflict),
-[provide](../04-schema.md#provide), [replace](../04-schema.md#replace)) on different aspects of the platform, like PHP,
-extensions or system libraries, including version constraints.
+O Composer disponibiliza informações sobre o ambiente em que é executado na
+forma de pacotes virtuais.
+Isso permite que outros pacotes definam dependências
+([require](../04-schema.md#require), [conflict](../04-schema.md#conflict),
+[provide](../04-schema.md#provide), [replace](../04-schema.md#replace)) em
+relação a diferentes aspectos da plataforma, como PHP, extensões ou bibliotecas
+do sistema, incluindo restrições de versão.
 
-When you require one of the platform packages no code is installed. The version numbers of platform packages are
-derived from the environment Composer is executed in and they cannot be updated or removed. They can however be
-overwritten for the purposes of dependency resolution with a [platform configuration](../06-config.md#platform).
+Ao declarar uma dependência em um dos pacotes de plataforma, nenhum código é
+instalado.
+Os números de versão dos pacotes de plataforma são derivados do ambiente onde o
+Composer é executado e não podem ser atualizados ou removidos.
+No entanto, eles podem ser substituídos para fins de resolução de dependências
+por meio de uma [configuração de plataforma](../06-config.md#platform).
 
-**For example:** If you are executing `composer update` with a PHP interpreter in version
-`7.4.42`, then Composer automatically adds a package to the pool of available packages
-called `php` and assigns version `7.4.42` to it.
+**Por exemplo:** se você estiver executando `composer update` com um
+interpretador PHP na versão `7.4.42`, o Composer adiciona automaticamente um
+pacote chamado `php` ao conjunto de pacotes disponíveis e atribui a ele a versão
+`7.4.42`.
 
-That's how packages can add a dependency on the used PHP version:
+É assim que os pacotes podem definir uma dependência em relação à versão do PHP
+usada:
 
 ```json
 {
@@ -36,49 +48,67 @@ That's how packages can add a dependency on the used PHP version:
 }
 ```
 
-Composer will check this requirement against the currently used PHP version when running the composer command.
+O Composer verificará esse requisito em relação à versão do PHP em uso ao
+executar o comando do Composer.
 
-### Different types of platform packages
+### Diferentes tipos de pacotes de plataforma
 
-The following types of platform packages exist and can be depended on:
+Existem os seguintes tipos de pacotes de plataforma, dos quais é possível
+depender:
 
-1. PHP (`php` and the subtypes: `php-64bit`, `php-ipv6`, `php-zts` `php-debug`)
-2. PHP Extensions (`ext-*`, e.g. `ext-mbstring`)
-3. PHP Libraries (`lib-*`, e.g. `lib-curl`)
-4. Composer (`composer`, `composer-plugin-api`, `composer-runtime-api`)
+1. PHP (`php` e os subtipos: `php-64bit`, `php-ipv6`, `php-zts`, `php-debug`).
+2. Extensões do PHP (`ext-*`, ex.: `ext-mbstring`).
+3. Bibliotecas do PHP (`lib-*`, ex.: `lib-curl`).
+4. Composer (`composer`, `composer-plugin-api`, `composer-runtime-api`).
 
-To see the complete list of platform packages available in your environment
-you can run `php composer.phar show --platform` (or `show -p` for short).
+Para ver a lista completa de pacotes de plataforma disponíveis em seu ambiente,
+você pode executar `php composer.phar show --platform` (ou `show -p`, de forma
+abreviada).
 
-The differences between the various Composer platform packages are explained further in this document.
+As diferenças entre os vários pacotes de plataforma do Composer são explicadas
+mais adiante neste documento.
 
-## Plugin package `composer-plugin-api`
+## Pacote de plugin `composer-plugin-api`
 
-You can modify Composer's behavior with [plugin](plugins.md) packages. Composer provides a set of versioned APIs for
-plugins. Because internal Composer changes may **not** change the plugin APIs, the API version may not increase every
-time the Composer version increases. E.g. In Composer version `2.3.12`, the `composer-plugin-api` version could still
-be `2.2.0`.
+Você pode modificar o comportamento do Composer com pacotes de
+[plugin](plugins.md).
+O Composer fornece um conjunto de APIs versionadas para plugins.
+Como alterações internas no Composer podem **não** alterar as APIs de plugin, a
+versão da API pode não aumentar toda vez que a versão do Composer aumentar.
+Por exemplo: na versão `2.3.12` do Composer, a versão do `composer-plugin-api`
+ainda poderia ser `2.2.0`.
 
-## Runtime package `composer-runtime-api`
+## Pacote de tempo de execução `composer-runtime-api`
 
-When applications which were installed with Composer are run (either on CLI or through a web request), they require the
-`vendor/autoload.php` file, typically as one of the first lines of executed code. Invocations of the Composer
-autoloader are considered the application "runtime".
+Quando aplicações instaladas com o Composer são executadas (seja via CLI ou por
+meio de uma requisição web), elas requerem o arquivo `vendor/autoload.php`,
+tipicamente como uma das primeiras linhas de código executado.
+Invocações do autoloader do Composer são consideradas o "tempo de execução" da
+aplicação.
 
-Starting with version 2.0, Composer makes [additional features](../07-runtime.md) (besides registering the class autoloader) available to the application runtime environment.
+A partir da versão 2.0, o Composer disponibiliza
+[recursos adicionais](../07-runtime.md) (além do registro do autoloader de
+classes) para o ambiente do tempo de execução da aplicação.
 
-Similar to `composer-plugin-api`, not every Composer release adds new runtime features,
-thus the version of `composer-runtime-api` is also increased independently from Composer's version.
+Assim como ocorre com o `composer-plugin-api`, nem todo lançamento do Composer
+adiciona novos recursos de tempo de execução; portanto, a versão do
+`composer-runtime-api` também é incrementada independentemente da versão do
+Composer.
 
-## Composer package `composer`
+## Pacote `composer` do Composer
 
-Starting with Composer 2.2.0, a new platform package called `composer` is available, which represents the exact
-Composer version that is executed. Packages depending on this platform package can therefore depend on (or conflict
-with) individual Composer versions to cover edge cases where neither the `composer-runtime-api` version nor the
-`composer-plugin-api` was changed.
+A partir do Composer 2.2.0, está disponível um novo pacote de plataforma chamado
+`composer`, que representa a versão exata do Composer que está sendo executada.
+Pacotes que dependem desse pacote de plataforma podem, assim, depender de (ou
+entrar em conflito com) versões específicas do Composer para cobrir casos
+excepcionais em que nem a versão do `composer-runtime-api` nem a do
+`composer-plugin-api` foram alteradas.
 
-Because this option was introduced with Composer 2.2.0, it is recommended to add a `composer-plugin-api` dependency on
-at least `>=2.2.0` to provide a more meaningful error message for users running older Composer versions.
+Como essa opção foi introduzida no Composer 2.2.0, recomenda-se adicionar uma
+dependência do `composer-plugin-api` com versão mínima `>=2.2.0` para fornecer
+uma mensagem de erro mais clara às pessoas usuárias que executam versões mais
+antigas do Composer.
 
-In general, depending on `composer-plugin-api` or `composer-runtime-api` is always recommended
-over depending on concrete Composer versions with the `composer` platform package.
+Em geral, depender de `composer-plugin-api` ou `composer-runtime-api` é sempre
+recomendado em vez de depender de versões concretas do Composer através do
+pacote de plataforma `composer`.
