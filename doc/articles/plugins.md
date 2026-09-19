@@ -6,50 +6,60 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: Modify and extend Composer's functionality
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/plugins.md
+source_revision: 6ffc1177404d0c50119c22dde6564a380f4a82c9
+translation_status: ready
+
+tagline: Modifique e estenda a funcionalidade do Composer
 ---
 
-# Setting up and using plugins
+# Configurando e usando plugins
 
-## Synopsis
+## Visão geral
 
-You may wish to alter or expand Composer's functionality with your own. For
-example if your environment poses special requirements on the behaviour of
-Composer which do not apply to the majority of its users or if you wish to
-accomplish something with Composer in a way that is not desired by most users.
+Você pode querer alterar ou expandir a funcionalidade do Composer com suas
+próprias implementações.
+Por exemplo, se o seu ambiente impuser requisitos específicos ao comportamento
+do Composer que não se aplicam à maioria das pessoas usuárias, ou se você quiser
+realizar algo com o Composer de uma maneira que não seja desejada pela maioria
+delas.
 
-In these cases you could consider creating a plugin to handle your
-specific logic.
+Nesses casos, você pode considerar a criação de um plugin para lidar com sua
+lógica específica.
 
-## Creating a Plugin
+## Criando um plugin
 
-A plugin is a regular Composer package which ships its code as part of the
-package and may also depend on further packages.
+Um plugin é um pacote Composer comum que inclui seu código como parte do pacote
+e também pode depender de outros pacotes.
 
-### Plugin Package
+### Pacote de plugin
 
-The package file is the same as any other package file but with the following
-requirements:
+O arquivo do pacote é igual a qualquer outro arquivo de pacote, mas com os
+seguintes requisitos:
 
-1. The [type][1] attribute must be `composer-plugin`.
-2. The [extra][2] attribute must contain an element `class` defining the
-   class name of the plugin (including namespace). If a package contains
-   multiple plugins, this can be an array of class names.
-3. You must require the special package called `composer-plugin-api`
-   to define which Plugin API versions your plugin is compatible with.
-   Requiring this package doesn't actually include any extra dependencies,
-   it only specifies which version of the plugin API to use.
+1. O atributo [type][1] deve ser `composer-plugin`.
+2. O atributo [extra][2] deve conter um elemento `class` definindo o nome da
+   classe do plugin (incluindo o namespace).
+   Se um pacote contiver múltiplos plugins, este pode ser um array de nomes de
+   classes.
+3. Você deve declarar como dependência o pacote especial chamado
+   `composer-plugin-api` para definir com quais versões da API de Plugins o seu
+   plugin é compatível.
+   Declarar esse pacote não adiciona, de fato, nenhuma dependência extra; apenas
+   especifica qual versão da API de Plugins deve ser utilizada.
 
-> **Note:** When developing a plugin, although not required, it's useful to add
-> a require-dev dependency on `composer/composer` to have IDE autocompletion on Composer classes.
+> **Nota:** Ao desenvolver um plugin, embora não seja obrigatório, é útil
+> adicionar uma dependência `require-dev` para `composer/composer` a fim de
+> obter autocompletar da IDE para as classes do Composer.
 
-The required version of the `composer-plugin-api` follows the same [rules][7]
-as a normal package's rules.
+A versão exigida do `composer-plugin-api` segue as mesmas [regras][7] aplicadas
+a pacotes comuns.
 
-The current Composer plugin API version is `2.6.0`.
+A versão atual da API de Plugins do Composer é `2.9.0`.
 
-An example of a valid plugin `composer.json` file (with the autoloading
-part omitted and an optional require-dev dependency on `composer/composer` for IDE auto completion):
+Um exemplo de arquivo `composer.json` válido para um plugin (com a parte de
+autoloading omitida e uma dependência `require-dev` opcional para
+`composer/composer`, visando o autocompletar da IDE):
 
 ```json
 {
@@ -67,16 +77,17 @@ part omitted and an optional require-dev dependency on `composer/composer` for I
 }
 ```
 
-### Plugin Class
+### Classe do plugin
 
-Every plugin has to supply a class which implements the
-[`Composer\Plugin\PluginInterface`][3]. The `activate()` method of the plugin
-is called after the plugin is loaded and receives an instance of
-[`Composer\Composer`][4] as well as an instance of
-[`Composer\IO\IOInterface`][5]. Using these two objects all configuration can
-be read and all internal objects and state can be manipulated as desired.
+Todo plugin deve fornecer uma classe que implemente a interface
+[`Composer\Plugin\PluginInterface`][3].
+O método `activate()` do plugin é chamado após o carregamento do plugin e recebe
+uma instância de [`Composer\Composer`][4], bem como uma instância de
+[`Composer\IO\IOInterface`][5].
+Com esses dois objetos, é possível ler toda a configuração e manipular todos os
+objetos e estados internos conforme desejado.
 
-Example:
+Exemplo:
 
 ```php
 <?php
@@ -97,65 +108,67 @@ class TemplateInstallerPlugin implements PluginInterface
 }
 ```
 
-## Event Handler
+## Manipulador de eventos
 
-Furthermore plugins may implement the
-[`Composer\EventDispatcher\EventSubscriberInterface`][6] in order to have its
-event handlers automatically registered with the `EventDispatcher` when the
-plugin is loaded.
+Além disso, os plugins podem implementar a interface
+[`Composer\EventDispatcher\EventSubscriberInterface`][6] para que seus
+manipuladores de eventos sejam registrados automaticamente no `EventDispatcher`
+quando o plugin for carregado.
 
-To register a method to an event, implement the method `getSubscribedEvents()`
-and have it return an array. The array key must be the
-[event name](https://getcomposer.org/doc/articles/scripts.md#event-names)
-and the value is the name of the method in this class to be called.
+Para registrar um método em um evento, implemente o método
+`getSubscribedEvents()` e faça com que ele retorne um array.
+A chave do array deve ser o [nome do evento](./scripts.md#nomes-de-eventos) e o
+valor deve ser o nome do método a ser chamado nesta classe.
 
-> **Note:** If you don't know which event to listen to, you can run a Composer
-> command with the COMPOSER_DEBUG_EVENTS=1 environment variable set, which might
-> help you identify what event you are looking for.
+> **Nota:** Se você não souber qual evento monitorar, pode executar um comando
+> do Composer com a variável de ambiente `COMPOSER_DEBUG_EVENTS=1` definida;
+> isso pode ajudar a identificar o evento que você procura.
 
 ```php
 public static function getSubscribedEvents()
 {
-    return array(
+    return [
         'post-autoload-dump' => 'methodToBeCalled',
         // ^ event name ^         ^ method name ^
-    );
+    ];
 }
 ```
 
-By default, the priority of an event handler is set to 0. The priority can be
-changed by attaching a tuple where the first value is the method name, as
-before, and the second value is an integer representing the priority.
-Higher integers represent higher priorities. Priority 2 is called before
-priority 1, etc.
+Por padrão, a prioridade de um manipulador de eventos é definida como 0.
+A prioridade pode ser alterada associando-se uma tupla na qual o primeiro valor
+é o nome do método, como anteriormente, e o segundo valor é um número inteiro
+que representa a prioridade.
+Valores inteiros mais altos representam prioridades mais altas.
+A prioridade 2 é executada antes da prioridade 1, e assim por diante.
 
 ```php
 public static function getSubscribedEvents()
 {
-    return array(
+    return [
         // Will be called before events with priority 0
-        'post-autoload-dump' => array('methodToBeCalled', 1)
-    );
+        'post-autoload-dump' => ['methodToBeCalled', 1]
+    ];
 }
 ```
 
-If multiple methods should be called, then an array of tuples can be attached
-to each event. The tuples do not need to include the priority. If it is
-omitted, it will default to 0.
+Se vários métodos precisarem ser chamados, um array de tuplas pode ser anexado a
+cada evento.
+As tuplas não precisam incluir a prioridade.
+Se ela for omitida, o valor padrão será 0.
 
 ```php
 public static function getSubscribedEvents()
 {
-    return array(
-        'post-autoload-dump' => array(
-            array('methodToBeCalled'      ), // Priority defaults to 0
-            array('someOtherMethodName', 1), // This fires first
-        )
-    );
+    return [
+        'post-autoload-dump' => [
+            ['methodToBeCalled'      ], // Priority defaults to 0
+            ['someOtherMethodName', 1], // This fires first
+        ]
+    ];
 }
 ```
 
-Here's a complete example:
+Aqui está um exemplo completo:
 
 ```php
 <?php
@@ -190,11 +203,11 @@ class AwsPlugin implements PluginInterface, EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
-            PluginEvents::PRE_FILE_DOWNLOAD => array(
-                array('onPreFileDownload', 0)
-            ),
-        );
+        return [
+            PluginEvents::PRE_FILE_DOWNLOAD => [
+                ['onPreFileDownload', 0]
+            ],
+        ];
     }
 
     public function onPreFileDownload(PreFileDownloadEvent $event)
@@ -208,17 +221,20 @@ class AwsPlugin implements PluginInterface, EventSubscriberInterface
 }
 ```
 
-## Plugin capabilities
+## Capacidades de plugins
 
-Composer defines a standard set of capabilities which may be implemented by plugins.
-Their goal is to make the plugin ecosystem more stable as it reduces the need to mess
-with [`Composer\Composer`][4]'s internal state, by providing explicit extension points
-for common plugin requirements.
+O Composer define um conjunto padrão de capacidades que podem ser implementadas
+por plugins.
+O objetivo é tornar o ecossistema de plugins mais estável, reduzindo a
+necessidade de manipular o estado interno da classe [`Composer\Composer`][4] ao
+fornecer pontos de extensão explícitos para requisitos comuns de plugins.
 
-Capable Plugins classes must implement the [`Composer\Plugin\Capable`][8] interface
-and declare their capabilities in the `getCapabilities()` method.
-This method must return an array, with the _key_ as a Composer Capability class name,
-and the _value_ as the Plugin's own implementation class name of said Capability:
+Classes de plugins que utilizam capacidades devem implementar a interface
+[`Composer\Plugin\Capable`][8] e declarar suas capacidades no método
+`getCapabilities()`.
+Esse método deve retornar um array, tendo como _chave_ o nome da classe de
+capacidade do Composer e como _valor_ o nome da classe de implementação da
+referida capacidade fornecida pelo próprio plugin:
 
 ```php
 <?php
@@ -238,17 +254,17 @@ class Plugin implements PluginInterface, Capable
 
     public function getCapabilities()
     {
-        return array(
+        return [
             'Composer\Plugin\Capability\CommandProvider' => 'My\Composer\CommandProvider',
-        );
+        ];
     }
 }
 ```
 
-### Command provider
+### Provedor de comandos
 
-The [`Composer\Plugin\Capability\CommandProvider`][9] capability allows to register
-additional commands for Composer:
+A funcionalidade [`Composer\Plugin\Capability\CommandProvider`][9] permite
+registrar comandos adicionais para o Composer:
 
 ```php
 <?php
@@ -264,7 +280,7 @@ class CommandProvider implements CommandProviderCapability
 {
     public function getCommands()
     {
-        return array(new Command);
+        return [new Command];
     }
 }
 
@@ -284,99 +300,128 @@ class Command extends BaseCommand
 }
 ```
 
-Now the `custom-plugin-command` is available alongside Composer commands.
+Agora, o comando `custom-plugin-command` está disponível juntamente com os
+comandos do Composer.
 
-> _Composer commands are based on the [Symfony Console Component][10]._
+> _Os comandos do Composer baseiam-se no [Componente Console do Symfony][10]._
 
-## Running plugins manually
+## Executando plugins manualmente
 
-Plugins for an event can be run manually by the `run-script` command. This works the same way as
-[running scripts manually](scripts.md#running-scripts-manually).
+Plugins associados a um evento podem ser executados manualmente por meio do
+comando `run-script`.
+Isso funciona da mesma maneira que
+[executar scripts manualmente](scripts.md#executando-scripts-manualmente).
 
-If it is another type of plugin the best way to test it is probably using a [path repository](../05-repositories.md#path)
-to require the plugin in a test project. If you are developing locally and want to test frequently, you can make sure the path repository uses symlinks, as changes are updated immediately. Otherwise, you'll have to run `rm -rf vendor && composer update`
-every time you want to install/run it again.
+Se for outro tipo de plugin, a melhor forma de testá-lo é, provavelmente,
+utilizar um [repositório do tipo path](../05-repositories.md#path) para incluir
+o plugin como dependência em um projeto de teste.
+Se você estiver desenvolvendo localmente e quiser realizar testes frequentes,
+pode configurar o repositório do tipo path para usar links simbólicos
+(symlinks), garantindo assim que as alterações sejam atualizadas imediatamente.
+Caso contrário, será necessário executar `rm -rf vendor && composer update`
+sempre que quiser instalá-lo ou executá-lo novamente.
 
-## Using Plugins
+## Utilizando plugins
 
-Plugin packages are automatically loaded as soon as they are installed and will
-be loaded when Composer starts up if they are found in the current project's
-list of installed packages. Additionally all plugin packages installed in the
-`COMPOSER_HOME` directory using the Composer global command are loaded before
-local project plugins are loaded.
+Pacotes de plugins são carregados automaticamente assim que são instalados e
+serão carregados na inicialização do Composer caso constem na lista de pacotes
+instalados do projeto atual.
+Além disso, todos os pacotes de plugins instalados no diretório `COMPOSER_HOME`
+por meio do comando global do Composer são carregados antes dos plugins locais
+do projeto.
 
-> You may pass the `--no-plugins` option to Composer commands to disable all
-> installed plugins. This may be particularly helpful if any of the plugins
-> causes errors and you wish to update or uninstall it.
+> Você pode utilizar a opção `--no-plugins` nos comandos do Composer para
+> desabilitar todos os plugins instalados.
+> Isso pode ser particularmente útil caso algum dos plugins cause erros e você
+> deseje atualizá-lo ou desinstalá-lo.
 
-## Plugin Helpers
+## Auxiliares de plugins
 
-As of Composer 2, due to the fact that DownloaderInterface can sometimes return Promises
-and have been split up in more steps than they used to, we provide a [SyncHelper][11]
-to make downloading and installing packages easier.
+A partir do Composer 2, porque a `DownloaderInterface` pode, às vezes, retornar
+*Promises* e ter sido dividida em mais etapas do que anteriormente,
+disponibilizamos um [SyncHelper][11] para facilitar o download e a instalação de
+pacotes.
 
-## Plugin Extra Attributes
+## Atributos extras de plugins
 
-A few special plugin capabilities can be unlocked using extra attributes in the plugin's composer.json.
+Algumas funcionalidades especiais de plugins podem ser habilitadas utilizando
+atributos extras no arquivo `composer.json` do plugin.
 
 ### class
 
-[See above](#plugin-package) for an explanation of the class attribute and how it works.
+[Veja acima](#pacote-de-plugin) a explicação sobre o atributo `class` e como ele
+funciona.
 
 ### plugin-modifies-downloads
 
-Some special plugins need to update package download URLs before they get downloaded.
+Alguns plugins especiais precisam atualizar as URLs de download dos pacotes
+antes que eles sejam baixados.
 
-As of Composer 2.0, all packages are downloaded before they get installed. This means
-on the first installation, your plugin is not yet installed when the download occurs,
-and it does not get a chance to update the URLs on time.
+A partir do Composer 2.0, todos os pacotes são baixados antes de serem
+instalados.
+Isso significa que, na primeira instalação, seu plugin ainda não está instalado
+quando o download ocorre, e ele não tem a oportunidade de atualizar as URLs a
+tempo.
 
-Specifying `{"extra": {"plugin-modifies-downloads": true}}` in your composer.json will
-hint to Composer that the plugin should be installed on its own before proceeding with
-the rest of the package downloads. This slightly slows down the overall installation
-process however, so do not use it in plugins which do not absolutely require it.
+Especificar `{"extra": {"plugin-modifies-downloads": true}}` no seu
+`composer.json` indicará ao Composer que o plugin deve ser instalado
+separadamente antes de prosseguir com o restante dos downloads de pacotes.
+No entanto, isso torna o processo geral de instalação ligeiramente mais lento;
+portanto, não utilize essa opção em plugins que não a exijam absolutamente.
 
 ### plugin-modifies-install-path
 
-Some special plugins modify the install path of packages.
+Alguns plugins especiais modificam o caminho de instalação dos pacotes.
 
-As of Composer 2.2.9, you can specify `{"extra": {"plugin-modifies-install-path": true}}`
-in your composer.json to hint to Composer that the plugin should be activated as soon
-as possible to prevent any bad side-effects from Composer assuming packages are installed
-in another location than they actually are.
+A partir do Composer 2.2.9, você pode especificar
+`{"extra": {"plugin-modifies-install-path": true}}` no seu `composer.json` para
+indicar ao Composer que o plugin deve ser ativado o mais rápido possível,
+evitando efeitos colaterais indesejados decorrentes de o Composer presumir que
+os pacotes estão instalados em um local diferente daquele onde realmente estão.
 
 ### plugin-optional
 
-Because Composer plugins can be used to perform actions which are necessary for installing
-a working application, like modifying which path files get stored in, skipping required
-plugins unintentionally can result in broken applications. So, in non-interactive mode,
-Composer will fail if a new plugin is not listed in ["allow-plugins"](../06-config.md#allow-plugins)
-to force users to decide if they want to execute the plugin, to avoid silent failures.
+Como os plugins do Composer podem ser usados para realizar ações necessárias
+para a instalação de uma aplicação funcional, como modificar o caminho onde os
+arquivos são armazenados, ignorar plugins necessários inadvertidamente pode
+resultar em aplicações que não funcionam.
+Por isso, no modo não interativo, o Composer falhará se um novo plugin não
+estiver listado em ["allow-plugins"](../06-config.md#allow-plugins); isso força
+as pessoas usuárias a decidirem se desejam executar o plugin, evitando falhas
+silenciosas.
 
-As of Composer 2.5.3, you can use the setting `{"extra": {"plugin-optional": true}}` on
-your plugin, to tell Composer that skipping the plugin has no catastrophic consequences,
-and it can safely be disabled in non-interactive mode if it is not yet listed in
-"allow-plugins". The next interactive run of Composer will still prompt users to choose if
-they want to enable or disable the plugin.
+A partir do Composer 2.5.3, você pode usar a configuração
+`{"extra": {"plugin-optional": true}}` em seu plugin para informar ao Composer
+que pular o plugin não acarreta consequências catastróficas, e que ele pode ser
+desativado com segurança no modo não interativo caso ainda não esteja listado
+em "allow-plugins".
+A próxima execução interativa do Composer ainda solicitará que as pessoas
+usuárias escolham se desejam ativar ou desativar o plugin.
 
-## Plugin Autoloading
+## Autoloading de plugins
 
-Due to plugins being loaded by Composer at runtime, and to ensure that plugins which
-depend on other packages can function correctly, a runtime autoloader is created whenever
-a plugin is loaded. That autoloader is only configured to load with the plugin dependencies,
-so you may not have access to all the packages which are installed.
+Como os plugins são carregados pelo Composer em tempo de execução, e para
+garantir que plugins que dependem de outros pacotes funcionem corretamente, um
+autoloader de tempo de execução é criado sempre que um plugin é carregado.
+Esse autoloader é configurado apenas para carregar as dependências do plugin;
+portanto, você pode não ter acesso a todos os pacotes instalados.
 
-## Static Analysis support
+## Suporte a análise estática
 
-As of Composer 2.3.7 we ship a `phpstan/rules.neon` PHPStan config file, which provides additional error checking when working on Composer plugins.
+A partir do Composer 2.3.7, disponibilizamos um arquivo de configuração
+`phpstan/rules.neon` para o PHPStan, que oferece verificação adicional de erros
+ao desenvolver plugins para o Composer.
 
-### Usage with [PHPStan Extension Installer][13]
+### Uso com o [PHPStan Extension Installer][13]
 
-The necessary configuration files are automatically loaded, in case your plugin projects declares a dependency to `phpstan/extension-installer`.
+Os arquivos de configuração necessários são carregados automaticamente caso o
+projeto do seu plugin declare uma dependência do `phpstan/extension-installer`.
 
-### Alternative manual installation
+### Instalação manual alternativa
 
-To make use of it, your Composer plugin project needs a [PHPStan config file][12], which includes the `phpstan/rules.neon` file:
+Para utilizá-lo, o projeto do seu plugin Composer precisa de um
+[arquivo de configuração do PHPStan][12] que inclua o arquivo
+`phpstan/rules.neon`:
 
 ```neon
 includes:
@@ -391,7 +436,7 @@ includes:
 [4]: https://github.com/composer/composer/blob/main/src/Composer/Composer.php
 [5]: https://github.com/composer/composer/blob/main/src/Composer/IO/IOInterface.php
 [6]: https://github.com/composer/composer/blob/main/src/Composer/EventDispatcher/EventSubscriberInterface.php
-[7]: ../01-basic-usage.md#package-versions
+[7]: ../01-basic-usage.md#restrições-de-versão-do-pacote
 [8]: https://github.com/composer/composer/blob/main/src/Composer/Plugin/Capable.php
 [9]: https://github.com/composer/composer/blob/main/src/Composer/Plugin/Capability/CommandProvider.php
 [10]: https://symfony.com/doc/current/components/console.html
