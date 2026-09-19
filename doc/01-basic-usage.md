@@ -161,10 +161,11 @@ Mesmo se o projeto for desenvolvido por apenas uma pessoa, em seis meses, ao
 reinstalar o projeto, você pode ter certeza de que as dependências instaladas
 continuam funcionando, mesmo que tenham sido lançadas muitas versões novas
 dessas dependências desde então.
-(Veja a nota abaixo sobre o uso do comando `update`.)
+(Observe a nota abaixo sobre o uso do comando `update`.)
 
-> **Nota:** Para bibliotecas, não é necessário fazer o commit do arquivo lock;
-> veja também: [Bibliotecas - Arquivo lock](02-libraries.md#arquivo-lock).
+> **Nota:** Para bibliotecas, não é necessário fazer o commit do arquivo de lock;
+> consulte também:
+> [Bibliotecas - Arquivo de lock](02-libraries.md#arquivo-de-lock).
 
 ### Instalando a partir do `composer.lock`
 
@@ -207,7 +208,7 @@ automaticamente as versões mais recentes das suas dependências.
 Para atualizar para as versões mais recentes, use o comando
 [`update`](03-cli.md#update-u).
 Ele buscará as versões correspondentes mais recentes (de acordo com seu arquivo
-`composer.json`) e atualizará o arquivo lock com as novas versões.
+`composer.json`) e atualizará o arquivo de lock com as novas versões.
 
 ```shell
 php composer.phar update
@@ -334,7 +335,7 @@ autoloading de arquivos.
 Consulte a referência de [`autoload`](04-schema.md#autoload) para obter mais
 informações.
 
-Veja também a documentação sobre
+Consulte também a documentação sobre
 [otimização do autoloader](articles/autoloader-optimization.md).
 
 > **Nota:** O Composer fornece seu próprio autoloader.
