@@ -84,7 +84,7 @@ origem e fazer o commit das alterações no controle de versão.
 Isso não é nada prático quando você quer testar a correção de uma falha em uma
 biblioteca que é dependência do seu projeto local.
 
-Por esse motivo, você pode definir aliases para pacotes diretamente nos campos
+Por isso, você pode definir aliases para pacotes diretamente nos campos
 `require` e `require-dev`.
 Suponha que você tenha encontrado uma falha no pacote `monolog/monolog`.
 Você clonou o [Monolog](https://github.com/Seldaek/monolog) no GitHub e corrigiu
