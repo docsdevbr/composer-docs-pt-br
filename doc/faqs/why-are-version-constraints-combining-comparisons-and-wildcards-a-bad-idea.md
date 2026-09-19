@@ -30,7 +30,6 @@ pacote na versão `3.0.0` ou não.
 A versão `3.0.0` deveria ser aceita, já que você pediu `>=2`, ou rejeitada, já
 que você pediu `2.*`?
 
-Por esse motivo, o Composer gera um erro indicando que essa definição é
-inválida.
+Por isso, o Composer gera um erro indicando que essa definição é inválida.
 A solução é refletir sobre o que você realmente deseja e usar apenas uma dessas
 regras.
