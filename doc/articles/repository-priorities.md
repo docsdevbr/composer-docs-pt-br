@@ -6,50 +6,60 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: Configure which packages are found in which repositories
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/repository-priorities.md
+source_revision: 239638e687e8e67a2f1dadf225731fcd6309e8c4
+translation_status: ready
+
+tagline: Configure quais pacotes são encontrados em quais repositórios
 ---
 
-# Repository priorities
+# Prioridades de repositório
 
-## Canonical repositories
+## Repositórios canônicos
 
-When Composer resolves dependencies, it will look up a given package in the
-topmost repository. If that repository does not contain the package, it
-goes on to the next one, until one repository contains it and the process ends.
+Quando o Composer resolve dependências, ele procura um determinado pacote no
+repositório de maior prioridade (o primeiro da lista).
+Se esse repositório não contiver o pacote, ele passa para o próximo, até que um
+repositório o contenha e o processo termine.
 
-Canonical repositories are better for a few reasons:
+Repositórios canônicos são preferíveis por alguns motivos:
 
-- Performance wise, it is more efficient to stop looking for a package once it
-  has been found somewhere. It also avoids loading duplicate packages in case
-  the same package is present in several of your repositories.
-- Security wise, it is safer to treat them canonically as it means that packages you
-  expect to come from your most important repositories will never be loaded from
-  another repository instead. Let's
-  say you have a private repository which is not canonical, and you require your
-  private package `foo/bar ^2.0` for example. Now if someone publishes
-  `foo/bar 2.999` to packagist.org, suddenly Composer will pick that package as it
-  has a higher version than your latest release (say 2.4.3), and you end up installing
-  something you may not have meant to. However, if the private repository is canonical,
-  that 2.999 version from packagist.org will not be considered at all.
+- Em termos de desempenho, é mais eficiente parar de procurar um pacote assim
+  que ele é encontrado em algum lugar.
+  Isso também evita carregar pacotes duplicados caso o mesmo pacote esteja
+  presente em vários dos seus repositórios.
+- Em termos de segurança, é mais seguro tratá-los como canônicos, pois isso
+  garante que pacotes que você espera que venham de seus repositórios mais
+  importantes nunca sejam carregados de outro repositório.
+  Digamos que você tenha um repositório privado que não seja canônico e precise
+  do seu pacote privado `foo/bar ^2.0`, por exemplo.
+  Se alguém publicar `foo/bar 2.999` no packagist.org, o Composer escolherá esse
+  pacote, pois ele tem uma versão superior à sua versão mais recente (digamos,
+  2.4.3), e você acaba instalando algo que talvez não pretendesse.
+  No entanto, se o repositório privado for canônico, essa versão 2.999 do
+  packagist.org não será considerada de forma alguma.
 
-There are however a few cases where you may want to specifically load some packages
-from a given repository, but not all. Or you may want a given repository to not be
-canonical, and to be only preferred if it has higher package versions than the
-repositories defined below.
+Existem, no entanto, alguns casos em que você pode querer carregar
+especificamente alguns pacotes de um determinado repositório, mas não todos.
+Ou você pode querer que um determinado repositório não seja canônico, sendo
+preferido apenas se contiver versões de pacotes superiores às dos repositórios
+definidos abaixo dele.
 
-## Default behavior
+## Comportamento padrão
 
-By default in Composer 2.x all repositories are canonical. Composer 1.x treated
-all repositories as non-canonical.
+Por padrão, no Composer 2.x, todos os repositórios são canônicos.
+O Composer 1.x tratava todos os repositórios como não canônicos.
 
-Another default is that the packagist.org repository is always added implicitly
-as the last repository, unless you [disable it](../05-repositories.md#disabling-packagist-org).
+Outro comportamento padrão é que o repositório packagist.org é sempre adicionado
+implicitamente como o último repositório, a menos que você o
+[desabilite](../05-repositories.md#desabilitando-o-packagist.org).
 
-## Making repositories non-canonical
+## Tornando repositórios não canônicos
 
-You can add the canonical option to any repository to disable this default behavior
-and make sure Composer keeps looking in other repositories, even if that repository
-contains a given package.
+Você pode adicionar a opção `canonical` a qualquer repositório para desabilitar
+esse comportamento padrão e garantir que o Composer continue procurando em
+outros repositórios, mesmo que aquele repositório contenha um determinado
+pacote.
 
 ```json
 {
@@ -63,13 +73,13 @@ contains a given package.
 }
 ```
 
-## Filtering packages
+## Filtrando pacotes
 
-You can also filter packages which a repository will be able to load, either by
-selecting which ones you want, or by excluding those you do not want.
+Você também pode filtrar os pacotes que um repositório poderá carregar, seja
+selecionando aqueles que deseja ou excluindo aqueles que não deseja.
 
-For example here we want to pick only the package `foo/bar` and all the packages from
-`some-vendor/` from this Composer repository.
+Por exemplo, aqui queremos selecionar apenas o pacote `foo/bar` e todos os
+pacotes de `some-vendor/` deste repositório Composer.
 
 ```json
 {
@@ -83,8 +93,8 @@ For example here we want to pick only the package `foo/bar` and all the packages
 }
 ```
 
-And in this other example we exclude `toy/package` from a repository, which
-we may not want to load in this project.
+E neste outro exemplo, excluímos `toy/package` de um repositório, pois talvez
+não queiramos carregá-lo neste projeto.
 
 ```json
 {
@@ -98,5 +108,6 @@ we may not want to load in this project.
 }
 ```
 
-Both `only` and `exclude` should be arrays of package names, which can also
-contain wildcards (`*`), which will match any character.
+Tanto `only` quanto `exclude` devem ser arrays de nomes de pacotes, que também
+podem conter caracteres curinga (`*`), os quais correspondem a qualquer
+caractere.
