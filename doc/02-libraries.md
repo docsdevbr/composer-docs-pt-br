@@ -83,17 +83,17 @@ Para mais informações sobre como o Composer trata tags e branches e como ele
 resolve restrições de versão de pacote, leia o artigo sobre
 [versões](articles/versions.md).
 
-## Arquivo lock
+## Arquivo de lock
 
 Para sua biblioteca, você pode fazer o commit do arquivo `composer.lock`, se
 quiser.
 Isso pode ajudar o seu time a testar sempre com as mesmas versões das
 dependências.
-No entanto, esse arquivo lock não terá nenhum efeito em outros projetos que
+No entanto, esse arquivo de lock não terá nenhum efeito em outros projetos que
 dependem da sua biblioteca.
 Ele só tem efeito no projeto principal.
 
-Se você não quiser fazer o commit do arquivo lock e estiver usando o git,
+Se você não quiser fazer o commit do arquivo de lock e estiver usando o git,
 adicione-o ao `.gitignore`.
 
 ## Publicando em um VCS
@@ -109,7 +109,7 @@ localmente.
 Vamos chamá-lo de `acme/blog`.
 Este blog dependerá de `acme/ola-mundo`, que por sua vez depende de
 `monolog/monolog`.
-Podemos fazer isso criando um novo diretório `blog` em algum lugar, contendo um
+Podemos fazer isso criando um diretório `blog` em algum lugar, contendo um
 `composer.json`:
 
 ```json
