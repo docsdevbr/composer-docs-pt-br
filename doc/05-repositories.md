@@ -212,7 +212,7 @@ A lista de versões também pode ser opcionalmente minificada usando
 Se você fizer isso, adicione a chave `"minified": "composer/2.0"` no nível
 superior para indicar ao Composer que ele deve expandir a lista de versões de
 volta aos dados originais.
-Veja https://repo.packagist.org/p2/monolog/monolog.json para um exemplo.
+Consulte https://repo.packagist.org/p2/monolog/monolog.json para um exemplo.
 
 Qualquer pacote requisitado que não exista DEVE retornar um código de status
 404, o que indicará ao Composer que este pacote não existe em seu repositório.
@@ -270,7 +270,7 @@ Deve retornar um array de nomes de pacotes:
 }
 ```
 
-Veja
+Consulte
 [https://packagist.org/packages/list.json?filter=composer/*](https://packagist.org/packages/list.json?filter=composer/*)
 como exemplo.
 
@@ -623,7 +623,7 @@ Os seguintes são suportados:
 Para obter pacotes desses sistemas, você precisa ter seus respectivos clientes
 instalados.
 Isso pode ser inconveniente.
-Por esse motivo, há suporte especial para GitHub e Bitbucket, que usa as APIs
+Por isso, há suporte especial para GitHub e Bitbucket, que usa as APIs
 fornecidas por esses sites para buscar os pacotes sem precisar instalar o
 sistema de controle de versão.
 O repositório VCS fornece arquivos `dist` para eles, que baixam os pacotes como
@@ -791,7 +791,7 @@ anexada à URL ao executar `svn co`.
 >   `version`.
 > - O Composer não atualizará as referências dos commits, portanto, se você usar
 >   `master` como referência, terá que excluir o pacote para forçar uma
->   atualização e terá que lidar com um arquivo lock instável.
+>   atualização e terá que lidar com um arquivo de lock instável.
 
 A chave `package` em um repositório `package` pode ser definida como um array
 para definir várias versões de um pacote:
@@ -1017,8 +1017,9 @@ Você pode configurar como a referência `dist` do pacote (que aparece no arquiv
 
 Existem os seguintes modos:
 - `none`: a referência será sempre nula.
-  Isso pode ajudar a reduzir conflitos no arquivo lock mas reduz a clareza sobre
-  quando ocorreu a última atualização e se o pacote está no estado mais recente.
+  Isso pode ajudar a reduzir conflitos no arquivo de lock mas reduz a clareza
+  sobre quando ocorreu a última atualização e se o pacote está no estado mais
+  recente.
 - `config`: a referência é construída com base em um hash do `composer.json` do
   pacote e da configuração do repositório.
 - `auto` (usado por padrão): a referência é construída com base no hash, como em
