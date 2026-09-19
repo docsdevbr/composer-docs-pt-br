@@ -38,7 +38,7 @@ Certos comandos do Composer, incluindo `exec`, `install` e `update`, permitem a
 execução de código de terceiros no seu sistema.
 Isso ocorre devido aos recursos de "plugins" e "scripts".
 Plugins e scripts têm acesso total à conta de usuário que executa o Composer.
-Por esse motivo, recomenda-se fortemente **evitar executar o Composer como
+Por isso, recomenda-se fortemente **evitar executar o Composer como
 superusuário/root**.
 Todos os comandos também disparam eventos que podem ser capturados por plugins;
 portanto, a menos que sejam explicitamente desabilitados, os plugins instalados
