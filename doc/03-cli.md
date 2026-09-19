@@ -105,7 +105,7 @@ php composer.phar init
   `composer.json`.
   Mapeia automaticamente o namespace do seu pacote para o diretório fornecido.
   (Espera um caminho relativo, ex.: `src/`.)
-  Veja também o [autoloading PSR-4](04-schema.md#psr-4).
+  Consulte também o [autoloading PSR-4](04-schema.md#psr-4).
 
 ## install / i
 
@@ -136,7 +136,7 @@ das dependências.
   Para obter o comportamento legado, no qual o Composer usa `source`
   automaticamente para versões de desenvolvimento de pacotes, use
   `--prefer-install=auto`.
-  Veja também [config.preferred-install](06-config.md#preferred-install).
+  Consulte também [config.preferred-install](06-config.md#preferred-install).
   O uso desta flag substituirá o valor definido na configuração.
 * **--dry-run:** se você quiser executar uma instalação sem realmente instalar
   um pacote, pode usar `--dry-run`.
@@ -146,7 +146,7 @@ das dependências.
   comportamento padrão).
 * **--no-dev:** ignora a instalação dos pacotes listados em `require-dev`.
   A geração do autoloader ignora as regras em `autoload-dev`.
-  Veja também [COMPOSER_NO_DEV](#composer-no-dev).
+  Consulte também [COMPOSER_NO_DEV](#composer-no-dev).
 * **--no-autoloader:** ignora a geração do autoloader.
 * **--no-progress:** remove a exibição de progresso que pode interferir em
   alguns terminais ou scripts que não tratam caracteres de backspace.
@@ -155,11 +155,11 @@ das dependências.
   Deve ser "table", "plain", "json" ou "summary" (padrão).
 * **--no-security-blocking:** OBSOLETO; use `--no-blocking` em vez disso.
   Permite instalar pacotes com avisos de segurança ou que estejam abandonados.
-  Veja também
+  Consulte também
   [COMPOSER_NO_SECURITY_BLOCKING](#composer-no-security-blocking).
 * **--no-blocking:** desabilita todo o bloqueio de dependências baseado em
   políticas durante a execução deste comando.
-  Veja também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
+  Consulte também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
 * **--optimize-autoloader (-o):** converte o autoloading PSR-0/4 em um mapa de
   classes para obter um autoloader mais rápido.
   Isso é recomendado especialmente em produção, mas pode demorar um pouco para
@@ -178,7 +178,7 @@ das dependências.
 * **--ignore-platform-reqs:** ignora todos os requisitos de plataforma (`php`,
   `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina local não
   atenda a eles.
-  Veja também a opção de configuração [`platform`](06-config.md#platform).
+  Consulte também a opção de configuração [`platform`](06-config.md#platform).
 * **--ignore-platform-req:** ignora um requisito de plataforma específico
   (`php`, `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina
   local não atenda a ele.
@@ -251,30 +251,31 @@ php composer.phar update vendor/pacote:2.0.1 vendor/pacote2:3.0.*
   Para obter o comportamento legado, no qual o Composer usa `source`
   automaticamente para versões de desenvolvimento de pacotes, use
   `--prefer-install=auto`.
-  Veja também [config.preferred-install](06-config.md#preferred-install).
+  Consulte também [config.preferred-install](06-config.md#preferred-install).
   O uso desta flag substituirá o valor definido na configuração.
 * **--dry-run:** simula o comando sem realmente fazer nada.
 * **--dev:** instala os pacotes listados em `require-dev` (este é o
   comportamento padrão).
 * **--no-dev:** ignora a instalação dos pacotes listados em `require-dev`.
   A geração do autoloader ignora as regras em `autoload-dev`.
-  Veja também [COMPOSER_NO_DEV](#composer-no-dev).
+  Consulte também [COMPOSER_NO_DEV](#composer-no-dev).
 * **--no-install:** não executa a etapa de instalação após atualizar o arquivo
   `composer.lock`.
 * **--no-audit:** não executa as etapas de auditoria após atualizar o arquivo
   `composer.lock`.
-  Veja também [COMPOSER_NO_AUDIT](#composer-no-audit).
+  Consulte também [COMPOSER_NO_AUDIT](#composer-no-audit).
 * **--audit-format:** formato de saída da auditoria.
   Deve ser "table", "plain", "json" ou "summary" (padrão).
 * **--no-security-blocking:** OBSOLETO; use `--no-blocking` em vez disso.
   Permite instalar pacotes com avisos de segurança ou que estejam abandonados.
-  Veja também
+  Consulte também
   [COMPOSER_NO_SECURITY_BLOCKING](#composer-no-security-blocking).
 * **--no-blocking:** desabilita todo o bloqueio de dependências baseado em
   políticas durante a execução deste comando.
-  Veja também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
-* **--lock:** sobrescreve o hash do arquivo lock para suprimir o alerta de que o
-  arquivo lock está desatualizado, sem atualizar as versões dos pacotes.
+  Consulte também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
+* **--lock:** sobrescreve o hash do arquivo de lock para suprimir o alerta de
+  que o arquivo de lock está desatualizado, sem atualizar as versões dos
+  pacotes.
   Metadados dos pacotes, como mirrors e URLs, são atualizados caso tenham
   sofrido alterações.
 * **--with:** restrição de versão temporária para adicionar, por exemplo,
@@ -308,7 +309,7 @@ php composer.phar update vendor/pacote:2.0.1 vendor/pacote2:3.0.*
 * **--ignore-platform-reqs:** ignora todos os requisitos de plataforma (`php`,
   `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina local não
   atenda a eles.
-  Veja também a opção de configuração [`platform`](06-config.md#platform).
+  Consulte também a opção de configuração [`platform`](06-config.md#platform).
 * **--ignore-platform-req:** ignora um requisito de plataforma específico
   (`php`, `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina
   local não atenda a ele.
@@ -349,8 +350,8 @@ tem o mesmo efeito que especificar a opção `--lock`, por exemplo,
 
 ## require / r
 
-O comando `require` adiciona novos pacotes ao arquivo `composer.json` presente
-no diretório atual.
+O comando `require` adiciona pacotes ao arquivo `composer.json` presente no
+diretório atual.
 Se nenhum arquivo existir, um arquivo será criado durante a execução do comando.
 
 Se você não especificar um pacote, o Composer solicitará que você procure por um
@@ -395,7 +396,7 @@ com `--no-update`.
   Para obter o comportamento legado, no qual o Composer usa `source`
   automaticamente para versões de desenvolvimento de pacotes, use
   `--prefer-install=auto`.
-  Veja também [config.preferred-install](06-config.md#preferred-install).
+  Consulte também [config.preferred-install](06-config.md#preferred-install).
   O uso desta flag substituirá o valor definido na configuração.
 * **--no-progress:** remove a exibição de progresso que pode interferir em
   alguns terminais ou scripts que não tratam caracteres de backspace.
@@ -405,19 +406,19 @@ com `--no-update`.
   `composer.lock`.
 * **--no-audit:** não executa as etapas de auditoria após atualizar o arquivo
   `composer.lock`.
-  Veja também [COMPOSER_NO_AUDIT](#composer-no-audit).
+  Consulte também [COMPOSER_NO_AUDIT](#composer-no-audit).
 * **--audit-format:** formato de saída da auditoria.
   Deve ser "table", "plain", "json" ou "summary" (padrão).
 * **--no-security-blocking:** OBSOLETO; use `--no-blocking` em vez disso.
   Permite instalar pacotes com avisos de segurança ou que estejam abandonados.
-  Veja também
+  Consulte também
   [COMPOSER_NO_SECURITY_BLOCKING](#composer-no-security-blocking).
 * **--no-blocking:** desabilita todo o bloqueio de dependências baseado em
   políticas durante a execução deste comando.
-  Veja também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
+  Consulte também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
 * **--update-no-dev:** executa a atualização de dependências com a opção
   `--no-dev`.
-  Veja também [COMPOSER_NO_DEV](#composer-no-dev).
+  Consulte também [COMPOSER_NO_DEV](#composer-no-dev).
 * **--update-with-dependencies (-w):** também atualiza as dependências dos novos
   pacotes requeridos, exceto aquelas que são requisitos raiz.
   Também pode ser definida por meio da variável de ambiente
@@ -429,7 +430,7 @@ com `--no-update`.
 * **--ignore-platform-reqs:** ignora todos os requisitos de plataforma (`php`,
   `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina local não
   atenda a eles.
-  Veja também a opção de configuração [`platform`](06-config.md#platform).
+  Consulte também a opção de configuração [`platform`](06-config.md#platform).
 * **--ignore-platform-req:** ignora um requisito de plataforma específico
   (`php`, `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina
   local não atenda a ele.
@@ -485,19 +486,19 @@ Após remover os requisitos, os requisitos modificados serão desinstalados.
   `composer.lock`.
 * **--no-audit:** não executa as etapas de auditoria após atualizar o arquivo
   `composer.lock`.
-  Veja também [COMPOSER_NO_AUDIT](#composer-no-audit).
+  Consulte também [COMPOSER_NO_AUDIT](#composer-no-audit).
 * **--audit-format:** formato de saída da auditoria.
   Deve ser "table", "plain", "json" ou "summary" (padrão).
 * **--no-security-blocking:** OBSOLETO; use `--no-blocking` em vez disso.
   Permite instalar pacotes com avisos de segurança ou que estejam abandonados.
-  Veja também
+  Consulte também
   [COMPOSER_NO_SECURITY_BLOCKING](#composer-no-security-blocking).
 * **--no-blocking:** desabilita todo o bloqueio de dependências baseado em
   políticas durante a execução deste comando.
-  Veja também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
+  Consulte também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
 * **--update-no-dev:** executa a atualização de dependências com a opção
   `--no-dev`.
-  Veja também [COMPOSER_NO_DEV](#composer-no-dev).
+  Consulte também [COMPOSER_NO_DEV](#composer-no-dev).
 * **--update-with-dependencies (-w):** também atualiza as dependências dos
   pacotes removidos.
   Também pode ser definida por meio da variável de ambiente
@@ -514,7 +515,7 @@ Após remover os requisitos, os requisitos modificados serão desinstalados.
 * **--ignore-platform-reqs:** ignora todos os requisitos de plataforma (`php`,
   `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina local não
   atenda a eles.
-  Veja também a opção de configuração [`platform`](06-config.md#platform).
+  Consulte também a opção de configuração [`platform`](06-config.md#platform).
 * **--ignore-platform-req:** ignora um requisito de plataforma específico
   (`php`, `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina
   local não atenda a ele.
@@ -586,7 +587,7 @@ php composer.phar reinstall "acme/*"
   Para obter o comportamento legado, no qual o Composer usa `source`
   automaticamente para versões de desenvolvimento de pacotes, use
   `--prefer-install=auto`.
-  Veja também [config.preferred-install](06-config.md#preferred-install).
+  Consulte também [config.preferred-install](06-config.md#preferred-install).
   O uso desta flag substituirá o valor definido na configuração.
 * **--no-autoloader:** ignora a geração do autoloader.
 * **--no-progress:** remove a exibição de progresso que pode interferir em
@@ -624,7 +625,7 @@ você tenha as dependências de plataforma necessárias.
 
 ### Opções
 
-* **--lock:** verifica as dependências apenas a partir do arquivo lock, e não
+* **--lock:** verifica as dependências apenas a partir do arquivo de lock, e não
   dos pacotes instalados.
 * **--no-dev:** desabilita a verificação das dependências dos pacotes listados
   em `require-dev`.
@@ -835,7 +836,7 @@ O código de cores é o seguinte:
 * **--format (-f):** permite escolher entre o formato de saída de texto (padrão)
   ou JSON.
 * **--no-dev:** não exibe dependências de desenvolvimento desatualizadas.
-* **--locked:** exibe as atualizações dos pacotes do arquivo lock,
+* **--locked:** exibe as atualizações dos pacotes do arquivo de lock,
   independentemente do que está atualmente no diretório `vendor`.
 * **--ignore-platform-reqs:** ignora todos os requisitos de plataforma (`php`,
   `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina local não
@@ -936,7 +937,7 @@ O comando `prohibits` informa quais pacotes estão impedindo a instalação de u
 determinado pacote.
 Especifique uma restrição de versão para verificar se as atualizações podem ser
 executadas no seu projeto e, se não, por que não.
-Veja o seguinte exemplo:
+Observe o seguinte exemplo:
 
 ```shell
 php composer.phar prohibits symfony/symfony 3.1
@@ -988,7 +989,7 @@ php composer.phar validate
   usarem restrições de versão não associadas ou excessivamente rígidas.
 * **--no-check-lock:** não emite um erro se o `composer.lock` existir e não
   estiver atualizado.
-* **--check-lock** verifica se o arquivo lock está atualizado (mesmo quando
+* **--check-lock** verifica se o arquivo de lock está atualizado (mesmo quando
   [config.lock](06-config.md#lock) é falso).
 * **--no-check-publish:** não emite um erro se o `composer.json` não for
   adequado para publicação como um pacote no Packagist, mas for válido.
@@ -1111,8 +1112,8 @@ Você também pode editar os valores das seguintes propriedades:
 `description`, `homepage`, `keywords`, `license`, `minimum-stability`, `name`,
 `prefer-stable`, `type` e `version`.
 
-Veja o capítulo [Config](06-config.md) para conhecer as opções de configuração
-válidas.
+Consulte o capítulo [Config](06-config.md) para conhecer as opções de
+configuração válidas.
 
 ### Opções
 
@@ -1313,7 +1314,7 @@ Por padrão, o comando procura por pacotes no [Packagist](https://packagist.org)
   Para obter o comportamento legado, no qual o Composer usa `source`
   automaticamente para versões de desenvolvimento de pacotes, use
   `--prefer-install=auto`.
-  Veja também [config.preferred-install](06-config.md#preferred-install).
+  Consulte também [config.preferred-install](06-config.md#preferred-install).
   O uso desta flag substituirá o valor definido na configuração.
 * **--repository:** fornece um repositório personalizado para pesquisar o
   pacote, que será usado no lugar do Packagist.
@@ -1323,8 +1324,8 @@ Por padrão, o comando procura por pacotes no [Packagist](https://packagist.org)
   Você pode usar esta opção várias vezes para configurar vários repositórios.
 * **--add-repository:** adiciona um repositório personalizado ao
   `composer.json`.
-  Se um arquivo lock estiver presente, ele será excluído e uma atualização será
-  executada, ao invés de uma instalação.
+  Se um arquivo de lock estiver presente, ele será excluído e uma atualização
+  será executada, ao invés de uma instalação.
 * **--dev:** instala os pacotes listados em `require-dev`.
 * **--no-dev:** ignora a instalação dos pacotes listados em `require-dev`.
 * **--no-scripts:** ignora a execução dos scripts definidos no pacote raiz.
@@ -1340,28 +1341,28 @@ Por padrão, o comando procura por pacotes no [Packagist](https://packagist.org)
 * **--no-install:** desabilita a instalação dos fornecedores.
 * **--no-audit:** não executa as etapas de auditoria após a conclusão da
   instalação.
-  Veja também [COMPOSER_NO_AUDIT](#composer-no-audit).
+  Consulte também [COMPOSER_NO_AUDIT](#composer-no-audit).
 * **--audit-format:** formato de saída da auditoria.
   Deve ser "table", "plain", "json" ou "summary" (padrão).
 * **--no-security-blocking:** OBSOLETO; use `--no-blocking` em vez disso.
   Permite instalar pacotes com avisos de segurança ou que estejam abandonados.
-  Veja também
+  Consulte também
   [COMPOSER_NO_SECURITY_BLOCKING](#composer-no-security-blocking).
 * **--no-blocking:** desabilita todo o bloqueio de dependências baseado em
   políticas durante a execução deste comando.
-  Veja também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
+  Consulte também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
 * **--ignore-platform-reqs:** ignora todos os requisitos de plataforma (`php`,
   `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina local não
   atenda a eles.
-  Veja também a opção de configuração [`platform`](06-config.md#platform).
+  Consulte também a opção de configuração [`platform`](06-config.md#platform).
 * **--ignore-platform-req:** ignora um requisito de plataforma específico
   (`php`, `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina
   local não atenda a ele.
   É possível ignorar múltiplos requisitos usando curingas.
 * **--require:** exige que pacotes adicionais sejam incluídos no `composer.json`
   após a instalação do projeto.
-  Se um arquivo lock estiver presente, ele será excluído e uma atualização será
-  executada em vez de uma instalação.
+  Se um arquivo de lock estiver presente, ele será excluído e uma atualização
+  será executada em vez de uma instalação.
   Pode ser especificado várias vezes para múltiplos pacotes.
   Deve seguir o formato `foo/bar:1.0.0` caso você queira especificar uma
   restrição de versão.
@@ -1405,7 +1406,7 @@ conveniência e mapas de classes por desempenho.
 * **--ignore-platform-reqs:** ignora todos os requisitos `php`, `hhvm`, `lib-*`
   e `ext-*` e pula a [verificação de plataforma](07-runtime.md#platform-check)
   para eles.
-  Veja também a opção de configuração [`platform`](06-config.md#platform).
+  Consulte também a opção de configuração [`platform`](06-config.md#platform).
 * **--ignore-platform-req:** ignora um requisito de plataforma específico
   (`php`, `hhvm`, `lib-*` e `ext-*`) e pula a
   [verificação de plataforma](07-runtime.md#platform-check) para ele.
@@ -1432,8 +1433,8 @@ Use `--format=json` para obter uma saída legível para máquinas.
 
 ### Opções
 
-* **--locked:** lista as licenças do arquivo lock, independentemente do conteúdo
-  atual do diretório `vendor`.
+* **--locked:** lista as licenças do arquivo de lock, independentemente do
+  conteúdo atual do diretório `vendor`.
 * **--format:** formato da saída: `text`, `json` ou `summary` (padrão: `text`).
 * **--no-dev:** remove as dependências de desenvolvimento da saída.
 
@@ -1517,11 +1518,11 @@ php composer.phar audit
 * **--no-dev:** desabilita a auditoria de pacotes listados em `require-dev`.
 * **--format (-f):** formato de saída da auditoria.
   Deve ser "table" (padrão), "plain", "json" ou "summary".
-* **--locked:** audita pacotes a partir do arquivo lock, independentemente do
+* **--locked:** audita pacotes a partir do arquivo de lock, independentemente do
   que está atualmente no diretório `vendor`.
 * **--abandoned:** comportamento em relação a pacotes abandonados.
   Deve ser "ignore", "report" ou "fail".
-  Veja também [config.audit.abandoned](06-config.md#abandoned).
+  Consulte também [config.audit.abandoned](06-config.md#abandoned).
   Passar esta flag substituirá o valor da configuração e a variável de ambiente.
 * **--ignore-severity:** ignora avisos de um determinado nível de gravidade.
   Pode ser passada uma ou mais vezes para ignorar múltiplos níveis de gravidade.
@@ -1559,7 +1560,8 @@ Por exemplo:
 COMPOSER=outro-composer.json php composer.phar install
 ```
 
-O arquivo lock gerado usará o mesmo nome: `outro-composer.lock` neste exemplo.
+O arquivo de lock gerado usará o mesmo nome: `outro-composer.lock` neste
+exemplo.
 
 ### COMPOSER_ALLOW_SUPERUSER
 
