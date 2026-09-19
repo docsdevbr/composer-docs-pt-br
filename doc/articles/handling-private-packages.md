@@ -6,50 +6,65 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: Hosting and installing private Composer packages
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/handling-private-packages.md
+source_revision: d1167b6348aa64aa8df94a43df8bb78afcf448ac
+translation_status: ready
+
+tagline: Hospedando e instalando pacotes privados do Composer
 ---
 
-# Handling private packages
+# Gerenciamento de pacotes privados
 
-# Private Packagist
+## Private Packagist
 
-[Private Packagist](https://packagist.com) is a commercial package hosting product
-offering professional support and web based management of private and public packages,
-and granular access permissions. Private Packagist provides mirroring for packages' zip
-files which makes installs faster and independent from third party systems - e.g.
-you can deploy even if GitHub is down because your zip files are mirrored.
+O [Private Packagist](https://packagist.com) é um produto comercial de
+hospedagem de pacotes que oferece suporte profissional, gerenciamento via web de
+pacotes públicos e privados, além de permissões de acesso granulares.
+O Private Packagist realiza o espelhamento de arquivos ZIP dos pacotes, tornando
+as instalações mais rápidas e independentes de sistemas de terceiros — por
+exemplo, você pode realizar uma implantação mesmo que o GitHub esteja fora do
+ar, pois seus arquivos ZIP estão espelhados.
 
-Private Packagist is available as a hosted SaaS solution or as an on-premise self-hosted
-package, providing an interactive set up experience.
+O Private Packagist está disponível como uma solução SaaS hospedada ou como um
+pacote auto-hospedado on-premise, oferecendo uma experiência de configuração
+interativa.
 
-Some of Private Packagist's revenue is used to pay for Composer and Packagist.org
-development and hosting so using it is a good way to support the maintenance of
-these open source projects financially. You can find more information about how to
-set up your own package archive on [Packagist.com](https://packagist.com).
+Parte da receita do Private Packagist é utilizada para financiar o
+desenvolvimento e a hospedagem do Composer e do Packagist.org; portanto,
+utilizá-lo é uma ótima maneira de apoiar financeiramente a manutenção desses
+projetos de código aberto.
+Você pode encontrar mais informações sobre como configurar seu próprio
+repositório de pacotes em [Packagist.com](https://packagist.com).
 
-# Satis
+## Satis
 
-Satis on the other hand is open source but only a static `composer` repository
-generator. It is a bit like an ultra-lightweight, static file-based version of
-packagist and can be used to host the metadata of your company's private
-packages, or your own. You can install it using [Composer](https://github.com/composer/satis?tab=readme-ov-file#run-from-source)
-or [Docker](https://github.com/composer/satis?tab=readme-ov-file#run-as-docker-container).
+Por outro lado, o Satis é de código aberto, mas funciona apenas como um gerador
+de repositórios `composer` estáticos.
+Ele é, de certa forma, uma versão ultraleve e baseada em arquivos estáticos do
+Packagist, podendo ser utilizado para hospedar os metadados de pacotes privados
+da sua empresa ou de projetos pessoais.
+Você pode instalá-lo usando o
+[Composer](https://github.com/composer/satis?tab=readme-ov-file#run-from-source)
+ou o
+[Docker](https://github.com/composer/satis?tab=readme-ov-file#run-as-docker-container).
 
-## Setup
+### Configuração
 
-For example let's assume you have a few packages you want to reuse across your
-company but don't really want to open-source. You would first define a Satis
-configuration: a json file that lists your curated
-[repositories](../05-repositories.md).
+Por exemplo, suponha que você tenha alguns pacotes que deseja reutilizar em toda
+a sua empresa, mas não quer torná-los código aberto.
+Primeiro, você definiria uma configuração do Satis: um arquivo JSON que lista os
+seus [repositórios](../05-repositories.md) selecionados.
 
-The default file name is satis.json but it could be anything you like.
+O nome de arquivo padrão é `satis.json`, mas pode ser qualquer nome de sua
+preferência.
 
-Here is an example configuration, you see that it holds a few VCS repositories,
-but those could be any types of [repositories](../05-repositories.md). Then it
-uses `"require-all": true` which selects all versions of all packages in the
-repositories you defined.
+Aqui está um exemplo de configuração: observe que ela contém alguns repositórios
+VCS, mas poderiam ser quaisquer tipos de [repositórios](../05-repositories.md).
+Ela utiliza `"require-all": true`, o que seleciona todas as versões de todos os
+pacotes nos repositórios que você definiu.
 
-The default file Satis looks for is `satis.json` in the root of the repository.
+O arquivo padrão que o Satis procura é o `satis.json`, localizado na raiz do
+repositório.
 
 ```json
 {
@@ -64,10 +79,10 @@ The default file Satis looks for is `satis.json` in the root of the repository.
 }
 ```
 
-If you want to cherry pick which packages you want, you can list all the
-packages you want to have in your satis repository inside the classic composer
-`require` key, using a `"*"` constraint to make sure all versions are selected,
-or another constraint if you want really specific versions.
+Se você quiser selecionar manualmente os pacotes desejados, pode listar todos
+eles no seu repositório Satis dentro da chave `require` padrão do Composer,
+utilizando a restrição `"*"` para garantir que todas as versões sejam
+selecionadas — ou outra restrição, caso precise de versões específicas.
 
 ```json
 {
@@ -84,43 +99,51 @@ or another constraint if you want really specific versions.
 }
 ```
 
-Once you've done this, you run:
+Depois de fazer isso, você executa:
 
-    php bin/satis build <configuration file> <build dir>
+```shell
+php bin/satis build <configuration file> <build dir>
+```
 
-When you ironed out that process, what you would typically do is run this
-command as a cron job on a server. It would then update all your package info
-much like Packagist does.
+Após ajustar esse processo, o procedimento padrão seria executar esse comando
+como uma tarefa do cron em um servidor.
+Isso atualizaria todas as informações dos seus pacotes, de forma semelhante ao
+que o Packagist faz.
 
-Note that if your private packages are hosted on GitHub, your server should
-have an ssh key that gives it access to those packages, and then you should add
-the `--no-interaction` (or `-n`) flag to the command to make sure it falls back
-to ssh key authentication instead of prompting for a password. This is also a
-good trick for continuous integration servers.
+Vale ressaltar que, se seus pacotes privados estiverem hospedados no GitHub, o
+servidor precisará de uma chave SSH que conceda acesso a eles; além disso, você
+deve adicionar a flag `--no-interaction` (ou `-n`) ao comando para garantir que
+ele utilize a autenticação por chave SSH em vez de solicitar uma senha.
+Essa também é uma boa estratégia para servidores de integração contínua.
 
-Set up a virtual-host that points to that `web/` directory, let's say it is
-`packages.example.org`. Alternatively, with PHP >= 5.4.0, you can use the
-built-in CLI server `php -S localhost:port -t satis-output-dir/` for a
-temporary solution.
+Configure um host virtual que aponte para o diretório `web/`, por exemplo,
+`packages.example.org`.
+Alternativamente, se estiver usando PHP >= 5.4.0, você pode utilizar o servidor
+CLI embutido (`php -S localhost:port -t satis-output-dir/`) como uma solução
+temporária.
 
-### Partial Updates
+### Atualizações parciais
 
-You can tell Satis to selectively update only particular packages or process
-only a repository with a given URL. This cuts down the time it takes to rebuild
-the `package.json` file and is helpful if you use (custom) webhooks to trigger
-rebuilds whenever code is pushed into one of your repositories.
+Você pode instruir o Satis a atualizar seletivamente apenas pacotes específicos
+ou a processar apenas um repositório com uma determinada URL.
+Isso reduz o tempo necessário para reconstruir o arquivo `package.json` e é útil
+caso você utilize webhooks (personalizados) para acionar reconstruções sempre
+que código for enviado para um de seus repositórios.
 
-To rebuild only particular packages, pass the package names on the command line
-like so:
+Para reconstruir apenas pacotes específicos, informe os nomes dos pacotes na
+linha de comando, desta forma:
 
-    php bin/satis build satis.json web/ this/package that/other-package
+```shell
+php bin/satis build satis.json web/ this/package that/other-package
+```
 
-Note that this will still need to pull and scan all of your VCS repositories
-because any VCS repository might contain (on any branch) one of the selected
-packages.
+Observe que isso ainda exigirá buscar e escanear todos os seus repositórios VCS,
+pois qualquer repositório VCS pode conter (em qualquer branch) um dos pacotes
+selecionados.
 
-If you want to scan only the selected package and not all VCS repositories you need
-to declare a *name* for all your package (this only work on VCS repositories type) :
+Se você quiser escanear apenas o pacote selecionado, e não todos os repositórios
+VCS, precisará declarar um *nome* para todos os seus pacotes (isso funciona
+apenas para repositórios do tipo VCS):
 
 ```json
 {
@@ -132,18 +155,21 @@ to declare a *name* for all your package (this only work on VCS repositories typ
 }
 ```
 
-If you want to scan only a single repository and update all packages found in
-it, pass the VCS repository URL as an optional argument:
+Se você quiser verificar apenas um único repositório e atualizar todos os
+pacotes encontrados nele, passe a URL do repositório VCS como um argumento
+opcional:
 
-    php bin/satis build --repository-url https://only.my/repo.git satis.json web/
+```shell
+php bin/satis build --repository-url https://only.my/repo.git satis.json web/
+```
 
-## Usage
+### Uso
 
-In your projects all you need to add now is your own Composer repository using
-the `packages.example.org` as URL, then you can require your private packages
-and everything should work smoothly. You don't need to copy all your
-repositories in every project anymore. Only that one unique repository that
-will update itself.
+Nos seus projetos, tudo o que você precisa fazer agora é adicionar o seu próprio
+repositório Composer usando `packages.example.org` como URL; assim, você poderá
+exigir seus pacotes privados e tudo deverá funcionar perfeitamente.
+Você não precisa mais copiar todos os seus repositórios em cada projeto, apenas
+aquele repositório único que se atualizará automaticamente.
 
 ```json
 {
@@ -156,13 +182,15 @@ will update itself.
 }
 ```
 
-### Security
+### Segurança
 
-To secure your private repository you can host it over SSH or SSL using a client
-certificate. In your project you can use the `options` parameter to specify the
-connection options for the server.
+Para proteger seu repositório privado, você pode hospedá-lo via SSH ou SSL
+utilizando um certificado de cliente.
+Em seu projeto, você pode usar o parâmetro `options` para especificar as opções
+de conexão com o servidor.
 
-Example using a custom repository using SSH (requires the SSH2 PECL extension):
+Exemplo de uso de um repositório personalizado via SSH (requer a extensão SSH2
+do PECL):
 
 ```json
 {
@@ -180,9 +208,11 @@ Example using a custom repository using SSH (requires the SSH2 PECL extension):
 }
 ```
 
-> **Tip:** See [ssh2 context options] for more information.
+> **Dica:** Consulte as
+> [opções de contexto ssh2](https://secure.php.net/manual/en/wrappers.ssh2.php#refsect1-wrappers.ssh2-options)
+> para mais informações.
 
-Example using SSL/TLS (HTTPS) using a client certificate:
+Exemplo utilizando SSL/TLS (HTTPS) com um certificado de cliente:
 
 ```json
 {
@@ -198,9 +228,12 @@ Example using SSL/TLS (HTTPS) using a client certificate:
 }
 ```
 
-> **Tip:** See [ssl context options] for more information.
+> **Dica:** Consulte as
+> [opções de contexto SSL](https://secure.php.net/manual/en/context.ssl.php)
+> para mais informações.
 
-Example using a custom HTTP Header field for token authentication:
+Exemplo utilizando um campo de cabeçalho HTTP personalizado para autenticação
+por token:
 
 ```json
 {
@@ -218,23 +251,25 @@ Example using a custom HTTP Header field for token authentication:
 }
 ```
 
-### Authentication
+### Autenticação
 
-Authentication can be handled in [several different ways](../articles/authentication-for-private-packages.md).
+A autenticação pode ser realizada de
+[várias maneiras diferentes](authentication-for-private-packages.md).
 
 ### Downloads
 
-When GitHub, GitLab or BitBucket repositories are mirrored on your local satis, the
-build process will include the location of the downloads these platforms make
-available. This means that the repository and your setup depend on the
-availability of these services.
+Quando repositórios do GitHub, GitLab ou Bitbucket são espelhados na sua
+instância local do Satis, o processo de construção incluirá a localização dos
+downloads disponibilizados por essas plataformas.
+Isso significa que o repositório e a sua configuração dependem da
+disponibilidade desses serviços.
 
-At the same time, this implies that all code which is hosted somewhere else (on
-another service or for example in Subversion) will not have downloads available
-and thus installations usually take a lot longer.
+Ao mesmo tempo, isso implica que todo código hospedado em outro lugar (em outro
+serviço ou, por exemplo, no Subversion) não terá downloads disponíveis e,
+portanto, as instalações geralmente levam muito mais tempo.
 
-To enable your satis installation to create downloads for all (Git, Mercurial
-and Subversion) your packages, add the following to your `satis.json`:
+Para permitir que sua instalação do Satis crie downloads para todos os seus
+pacotes (Git, Mercurial e Subversion), adicione o seguinte ao seu `satis.json`:
 
 ```json
 {
@@ -247,48 +282,50 @@ and Subversion) your packages, add the following to your `satis.json`:
 }
 ```
 
-#### Options explained
+#### Explicação das opções
 
- * `directory`: required, the location of the dist files (inside the
-   `output-dir`)
- * `format`: optional, `zip` (default) or `tar`
- * `prefix-url`: optional, location of the downloads, homepage (from
-   `satis.json`) followed by `directory` by default
- * `skip-dev`: optional, `false` by default, when enabled (`true`) satis will
-   not create downloads for branches
- * `absolute-directory`: optional, a _local_ directory where the dist files are
-   dumped instead of `output-dir`/`directory`
- * `whitelist`: optional, if set as a list of package names, satis will only
-   dump the dist files of these packages
- * `blacklist`: optional, if set as a list of package names, satis will not
-   dump the dist files of these packages
- * `checksum`: optional, `true` by default, when disabled (`false`) satis will
-   not provide the sha1 checksum for the dist files
+* `directory`: obrigatório, o local dos arquivos de distribuição (dentro do
+  `output-dir`).
+* `format`: opcional, `zip` (padrão) ou `tar`.
+* `prefix-url`: opcional, local dos downloads; por padrão, é a página inicial
+  (definida em `satis.json`) seguida pelo `directory`.
+* `skip-dev`: opcional, `false` por padrão; quando ativado (`true`), o Satis não
+  criará downloads para branches.
+* `absolute-directory`: opcional, um diretório _local_ onde os arquivos de
+  distribuição são salvos, em vez de `output-dir`/`directory`.
+* `whitelist`: opcional; se definida como uma lista de nomes de pacotes, o Satis
+  salvará apenas os arquivos de distribuição desses pacotes.
+* `blacklist`: opcional; se definida como uma lista de nomes de pacotes, o Satis
+  não salvará os arquivos de distribuição desses pacotes.
+* `checksum`: opcional, `true` por padrão; quando desativado (`false`), o Satis
+  não fornecerá o checksum sha1 para os arquivos de distribuição.
 
-Once enabled, all downloads (include those from GitHub and BitBucket) will be
-replaced with a _local_ version.
+Uma vez habilitado, todos os downloads (incluindo aqueles do GitHub e Bitbucket)
+serão substituídos por uma versão _local_.
 
-#### prefix-url
+#### `prefix-url`
 
-Prefixing the URL with another host is especially helpful if the downloads end
-up in a private Amazon S3 bucket or on a CDN host. A CDN would drastically
-improve download times and therefore package installation.
+Adicionar um prefixo de host à URL é especialmente útil se os downloads
+estiverem hospedados em um bucket privado do Amazon S3 ou em uma CDN.
+O uso de uma CDN melhoraria drasticamente os tempos de download e,
+consequentemente, a instalação do pacote.
 
-Example: A `prefix-url` of `https://my-bucket.s3.amazonaws.com` (and
-`directory` set to `dist`) creates download URLs which look like the following:
+Exemplo: um `prefix-url` definido como `https://my-bucket.s3.amazonaws.com` (com
+o `directory` definido como `dist`) gera URLs de download no seguinte formato:
 `https://my-bucket.s3.amazonaws.com/dist/vendor-package-version-ref.zip`.
 
-### Web outputs
+### Saídas web
 
- * `output-html`: optional, `true` by default, when disabled (`false`) satis
-   will not generate the `output-dir`/index.html page.
- * `twig-template`: optional, a path to a personalized [Twig] template for
-   the `output-dir`/index.html page.
+* `output-html`: opcional, `true` por padrão; quando desativado (`false`), o
+  Satis não gerará a página `output-dir/index.html`.
+* `twig-template`: opcional, um caminho para um template
+  [Twig](https://twig.sensiolabs.org/) personalizado para a página
+  `output-dir/index.html`.
 
-### Abandoned packages
+### Pacotes abandonados
 
-To enable your satis installation to indicate that some packages are abandoned,
-add the following to your `satis.json`:
+Para permitir que sua instalação do Satis indique que alguns pacotes estão
+abandonados, adicione o seguinte ao seu `satis.json`:
 
 ```json
 {
@@ -299,18 +336,20 @@ add the following to your `satis.json`:
 }
 ```
 
-The `true` value indicates that the package is truly abandoned while the
-`"company/newpackage"` value specifies that the package is replaced by the
-`company/newpackage` package.
+O valor `true` indica que o pacote está realmente abandonado, enquanto o valor
+`"company/newpackage"` especifica que o pacote foi substituído pelo pacote
+`company/newpackage`.
 
-Note that all packages set as abandoned in their own `composer.json` file will
-be marked abandoned as well.
+Observe que todos os pacotes definidos como abandonados em seus próprios
+arquivos `composer.json` também serão marcados como abandonados.
 
-### Resolving dependencies
+### Resolvendo dependências
 
-It is possible to make satis automatically resolve and add all dependencies for
-your projects. This can be used with the Downloads functionality to have a
-complete local mirror of packages. Add the following to your `satis.json`:
+É possível fazer com que o Satis resolva e adicione automaticamente todas as
+dependências dos seus projetos.
+Esse recurso pode ser utilizado em conjunto com a funcionalidade de downloads
+para criar um espelho local completo dos pacotes.
+Adicione o seguinte ao seu `satis.json`:
 
 ```json
 {
@@ -319,29 +358,28 @@ complete local mirror of packages. Add the following to your `satis.json`:
 }
 ```
 
-When searching for packages, satis will attempt to resolve all the required
-packages from the listed repositories.  Therefore, if you are requiring a
-package from Packagist, you will need to define it in your `satis.json`.
+Ao buscar pacotes, o Satis tentará resolver todos os pacotes necessários a
+partir dos repositórios listados.
+Portanto, se você precisar de um pacote do Packagist, precisará defini-lo no seu
+`satis.json`.
 
-Dev dependencies are packaged only if the `require-dev-dependencies` parameter
-is set to true.
+As dependências de desenvolvimento são incluídas apenas se o parâmetro
+`require-dev-dependencies` estiver definido como `true`.
 
-### Other options
+### Outras opções
 
- * `providers`: optional, `false` by default, when enabled (`true`) each
-   package will be dumped into a separate include file which will be only
-   loaded by Composer when the package is really required. Speeds up composer
-   handling for repositories with huge number of packages like f.i. packagist.
- * `output-dir`: optional, defines where to output the repository files if not
-   provided as an argument when calling the `build` command.
- * `config`: optional, lets you define all config options from composer, except
-   `archive-format` and `archive-dir` as the configuration is done through
-   [archive](#downloads) instead. See docs on [config schema] for more details.
- * `notify-batch`: optional, specify a URL that will be called every time a
-   user installs a package. See [notify-batch].
-
-[ssh2 context options]: https://secure.php.net/manual/en/wrappers.ssh2.php#refsect1-wrappers.ssh2-options
-[ssl context options]: https://secure.php.net/manual/en/context.ssl.php
-[Twig]: https://twig.sensiolabs.org/
-[config schema]: https://getcomposer.org/doc/04-schema.md#config
-[notify-batch]: https://getcomposer.org/doc/05-repositories.md#notify-batch
+* `providers`: opcional, `false` por padrão; quando habilitado (`true`), cada
+  pacote será gravado em um arquivo de inclusão separado, que só será carregado
+  pelo Composer quando o pacote for realmente necessário.
+  Acelera o processamento do Composer para repositórios com muitos pacotes,
+  como, por exemplo, o Packagist.
+* `output-dir`: opcional, define onde os arquivos do repositório serão gerados,
+  caso não seja fornecido como argumento ao executar o comando `build`.
+* `config`: opcional, permite definir todas as opções de configuração do
+  Composer, exceto `archive-format` e `archive-dir`, uma vez que essa
+  configuração é feita por meio de [archive](#downloads).
+  Consulte a documentação sobre o [esquema de configuração](../06-config.md)
+  para mais detalhes.
+* `notify-batch`: opcional, especifica uma URL que será chamada sempre que um
+  usuário instalar um pacote.
+  Consulte [notify-batch](../05-repositories.md#notify-batch).
