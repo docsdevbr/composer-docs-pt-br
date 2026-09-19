@@ -6,115 +6,170 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: On gracefully resolving conflicts while merging
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/resolving-merge-conflicts.md
+source_revision: 2a994c9913a282d072a25c623d512fb33fd5354b
+translation_status: ready
+
+tagline: Sobre resolver conflitos com elegância durante o merge
 ---
 
-# Resolving merge conflicts
+# Resolvendo conflitos de merge
 
-When working as a team on the same Composer project, you will eventually run into a scenario
-where multiple people added, updated or removed something in the `composer.json` and
-`composer.lock` files in multiple branches. When those branches are eventually merged
-together, you will get merge conflicts. Resolving these merge conflicts is not as straight
-forward as on other files, especially not regarding the `composer.lock` file.
+Ao trabalhar em equipe no mesmo projeto Composer, você eventualmente se deparará
+com uma situação em que várias pessoas adicionaram, atualizaram ou removeram
+algo nos arquivos `composer.json` e `composer.lock` em diferentes branches.
+Quando esses branches forem finalmente mesclados, surgirão conflitos de merge.
+Resolver esses conflitos não é tão simples quanto em outros arquivos,
+especialmente no caso do arquivo `composer.lock`.
 
-> **Note:** It might not immediately be obvious why text based merging is not possible for
-> lock files, so let's imagine the following example where we want to merge two branches;
+> **Nota:** Pode não ficar imediatamente óbvio por que o merge baseada em texto
+> não é possível para arquivos de lock; então, vamos imaginar o seguinte
+> exemplo, no qual queremos fazer o merge de dois branches:
 >
-> - Branch 1 has added package A which requires package B. Package B is locked at version `1.0.0`.
-> - Branch 2 has added package C which conflicts with all versions below `1.2.0` of package B.
+> - O branch 1 adicionou o pacote A, que requer o pacote B.
+>   O pacote B está travado na versão `1.0.0`.
+> - O branch 2 adicionou o pacote C, que entra em conflito com todas as versões
+>   do pacote B anteriores à `1.2.0`.
 >
-> A text based merge would result in package A version `1.0.0`, package B version `1.0.0`
-> and package C version `1.0.0`. This is an invalid result, as the conflict of package C
-> was not considered and would require an upgrade of package B.
+> Um merge baseado em texto resultaria no pacote A versão `1.0.0`, pacote B
+> versão `1.0.0` e pacote C versão `1.0.0`.
+> Esse é um resultado inválido, pois o conflito do pacote C não foi considerado
+> e exigiria uma atualização do pacote B.
 
-## 1. Reapplying changes
+## 1. Reaplicando alterações
 
-The safest method to merge Composer files is to accept the version from one branch and apply
-the changes from the other branch.
+O método mais seguro para fazer o merge de arquivos do Composer é aceitar a
+versão de um dos branches e aplicar as alterações do outro branch.
 
-An example where we have two branches:
+Um exemplo envolvendo dois branches:
 
-1. Package 'A' has been added
-2. Package 'B' has been removed and package 'C' is added.
+1. O pacote 'A' foi adicionado.
+2. O pacote 'B' foi removido e o pacote 'C' foi adicionado.
 
-To resolve the conflict when we merge these two branches:
+Para resolver o conflito ao fazer o merge desses dois branches:
 
-- We choose the branch that has the most changes, and accept the `composer.json` and `composer.lock`
-  files from that branch. In this case, we choose the Composer files from branch 2.
-- We reapply the changes from the other branch (branch 1). In this case we have to run
-  `composer require package/A` again.
+- Escolhemos o branch que contém mais alterações e aceitamos os arquivos
+  `composer.json` e `composer.lock` desse branch.
+  Neste caso, escolhemos os arquivos do Composer do branch 2.
+- Reaplicamos as alterações do outro branch (branch 1).
+  Neste caso, precisamos executar `composer require package/A` novamente.
 
-## 2. Validating your merged files
+## 2. Validando seus arquivos mesclados
 
-Before committing, make sure the resulting `composer.json` and `composer.lock` files are valid.
-To do this, run the following commands:
+Antes de fazer o commit, certifique-se de que os arquivos `composer.json` e
+`composer.lock` resultantes sejam válidos.
+Para isso, execute os seguintes comandos:
 
 ```shell
 php composer.phar validate
 php composer.phar install [--dry-run]
 ```
 
-## Automating merge conflict resolving with git
+## Automatizando a resolução de conflitos de merge com o Git
 
-Some improvement _could_ be made to git's conflict resolving by using a custom git merge driver.
+A resolução de conflitos do Git _poderia_ ser aprimorada com o uso de um driver
+de merge personalizado.
 
-An example of this can be found at [balbuf's composer git merge driver](https://github.com/balbuf/composer-git-merge-driver).
+Um exemplo disso pode ser encontrado no
+[driver de merge do Composer para Git, de balbuf](https://github.com/balbuf/composer-git-merge-driver).
 
-## Important considerations
+### Lidando com casos triviais
 
-Keep in mind that whenever merge conflicts occur on the lock file, the information, about the exact version
-new packages were locked on for one of the branches, is lost. When package A in branch 1 is constrained
-as `^1.2.0` and locked as `1.2.0`, it might get updated when branch 2 is used as baseline and a new
-`composer require package/A:^1.2.0` is executed, as that will use the most recent version that the
-constraint allows when possible. There might be a version 1.3.0 for that package available by now, which
-will now be used instead.
+Em um pequeno número de casos, apenas o `content-hash` apresentará conflito,
+pois o sistema de controle de versão pode conseguir realizar o merge do restante
+do texto do arquivo sem problemas.
+Isso geralmente ocorre quando dois pacotes diferentes foram adicionados ou
+atualizados em cada lado do merge, sem sobreposição ou conflito de dependências.
+Quando isso acontece, executar `composer update --lock` pode ser suficiente para
+remover a marcação de conflito e atualizar o hash do arquivo de lock.
+Você também pode executar qualquer outra variante do comando `composer update`
+para remover a marcação de conflito e, potencialmente, atualizar os pacotes.
 
-Choosing the correct [version constraints](../articles/versions.md) and making sure the packages adhere
-to [semantic versioning](https://semver.org/) when using
-[next significant release operators](versions.md#next-significant-release-operators) should make sure
-that merging branches does not break anything by accidentally updating a dependency.
+## Considerações importantes
 
-# Recovering from incorrectly resolved merge conflicts
+Lembre-se de que, sempre que ocorrerem conflitos de merge no arquivo de lock,
+perde-se a informação sobre a versão exata na qual os novos pacotes foram
+fixados em um dos branches.
+Quando o pacote A no branch 1 está restrito a `^1.2.0` e fixado na versão
+`1.2.0`, ele pode ser atualizado se o branch 2 for usado como base e um novo
+comando `composer require package/A:^1.2.0` for executado; isso ocorre porque o
+comando utilizará a versão mais recente permitida pela restrição, sempre que
+possível.
+É possível que a versão 1.3.0 desse pacote já esteja disponível, passando então
+a ser utilizada em vez da anterior.
 
-If the above steps aren't followed and text based merges have been done anyway,
-your Composer project might be in a state where unexpected behaviour is observed
-because the `composer.lock` file is not (fully) in sync with the `composer.json` file.
+A escolha correta das [restrições de versão](../articles/versions.md) e a
+garantia de que os pacotes sigam o
+[versionamento semântico](https://semver.org/) ao utilizar
+[operadores de próxima versão significativa](versions.md#next-significant-release-operators)
+devem assegurar que o merge de branches não cause falhas devido à atualização
+acidental de uma dependência.
 
-There are two things that can happen here:
+## Recuperação de conflitos de merge resolvidos incorretamente
 
-1. There are packages in the `require` or `require-dev` section of the `composer.json` file that are not in the lock file and as a result never installed
+Se as etapas acima não forem seguidas e merges baseados em texto forem
+realizados mesmo assim, seu projeto Composer pode acabar em um estado que
+apresenta comportamento inesperado, pois o arquivo `composer.lock` não está
+(totalmente) sincronizado com o arquivo `composer.json`.
 
-> **Note:** Starting from Composer release 2.5, having packages that are required but not present in `composer.lock` results in an error when running `install`
+Duas situações podem ocorrer nesse caso:
 
-2. There are packages in the `composer.lock` file that are not a direct or indirect dependency of any of the packages required. As a result, a package is installed, even though running `composer why vendor/package` says it is not required.
+1. Existem pacotes nas seções `require` ou `require-dev` do arquivo
+   `composer.json` que não constam no arquivo de lock e, consequentemente, nunca
+   são instalados.
 
-There are several ways to fix these issues;
+   > **Nota:** A partir da versão 2.5 do Composer, a presença de pacotes
+   > requeridos, mas não estão no `composer.lock`, resulta em erro ao executar o
+   > comando `install`.
 
-## A. Start from scratch
+2. Existem pacotes no arquivo `composer.lock` que não são dependências diretas
+   ou indiretas de nenhum dos pacotes requeridos.
+   Como resultado, um pacote acaba sendo instalado, mesmo que o comando
+   `composer why vendor/package` indique que ele não é requerido.
 
-The easiest but most impactful option is run a `composer update` to resolve to a correct state from scratch.
+Existem várias maneiras de corrigir esses problemas.
 
-A drawback to this is that previously locked package versions are now updated, as the information about previous package versions has been lost. If all your dependencies follow [semantic versioning](https://semver.org/) and your [version constraints](../articles/versions.md) are using [next significant release operators](versions.md#next-significant-release-operators) this should not be an issue, otherwise you might inadvertently break your application.
+### A. Começar do zero
 
-## B. Reconstruct from the git history
+A opção mais simples, porém de maior impacto, é executar um `composer update`
+para chegar ao estado correto partindo do zero.
 
-An option that is probably not very feasible in a lot of situations but that deserves an honorable mention;
+Uma desvantagem dessa abordagem é que as versões de pacotes anteriormente
+fixadas serão atualizadas, uma vez que as informações sobre as versões
+anteriores foram perdidas.
+Se todas as suas dependências seguirem o
+[versionamento semântico](https://semver.org/) e suas
+[restrições de versão](../articles/versions.md) utilizarem
+[operadores de próxima versão significativa](versions.md#next-significant-release-operators),
+isso não deve ser um problema; caso contrário, você poderá quebrar sua aplicação
+inadvertidamente.
 
-It might be possible to reconstruct the correct package state by going back into the git history and finding the most recent valid `composer.lock` file, and re-requiring the new dependencies from there.
+### B. Reconstruir a partir do histórico do Git
 
-## C. Resolve issues manually
+Uma opção que provavelmente não é muito viável em muitas situações, mas que
+merece uma menção honrosa:
 
-There is an option to recover from a discrepancy between the `composer.json` and `composer.lock` file without having to dig through the git history or starting from scratch. For that, we need to solve issue 1 and 2 separately.
+Deve ser possível reconstruir o estado correto dos pacotes voltando no histórico
+do Git, localizando o arquivo `composer.lock` válido mais recente e adicionando
+novamente as novas dependências a partir desse ponto.
 
-### 1. Detecting and fixing missing required packages
+### C. Resolver problemas manualmente
 
-To detect any package that is required but not installed, you can simply run:
+Existe uma opção para corrigir uma divergência entre os arquivos `composer.json`
+e `composer.lock` sem precisar vasculhar o histórico do Git ou começar do zero.
+Para isso, precisamos resolver os problemas 1 e 2 separadamente.
+
+#### 1. Detectar e corrigir pacotes necessários ausentes
+
+Para detectar qualquer pacote que seja necessário, mas não esteja instalado,
+basta executar:
 
 ```shell
 php composer.phar validate
 ```
 
-If there are packages that are required but not installed, you should get output similar to this:
+Se houver pacotes necessários, mas não instalados, você deverá obter uma saída
+semelhante a esta:
 
 ```shell
 ./composer.json is valid but your composer.lock has some errors
@@ -125,27 +180,32 @@ Read more about correctly resolving merge conflicts https://getcomposer.org/doc/
 and prefer using the "require" command over editing the composer.json file directly https://getcomposer.org/doc/03-cli.md#require
 ```
 
-To recover from this, simply run `composer update vendor/package-name` for each package listed here. After doing this for each package listed here, running `composer validate` again should result in no lock file errors:
+Para corrigir isso, basta executar `composer update vendor/package-name` para
+cada pacote listado aqui.
+Após fazer isso para cada pacote listado, a execução de `composer validate`
+novamente não deve apresentar erros no arquivo de lock:
 
 ```shell
 ./composer.json is valid
 ```
 
-### 2. Detecting and fixing superfluous packages
+#### 2. Detectar e corrigir pacotes supérfluos
 
-To detect and fix packages that are locked but not a direct/indirect dependency, you can run the following command:
+Para detectar e corrigir pacotes que estão travados, mas não são dependências
+diretas ou indiretas, você pode executar o seguinte comando:
 
 ```shell
 php composer.phar remove --unused
 ```
 
-If there are no packages locked that are not a dependency, the command will have the following output:
+Se não houver pacotes travados que não sejam dependências, o comando apresentará
+a seguinte saída:
 
 ```shell
 No unused packages to remove
 ```
 
-If there are packages to be cleaned up, the output will be as follows:
+Se houver pacotes a serem removidos, a saída será a seguinte:
 
 ```shell
 vendor/package-name is not required in your composer.json and has not been removed
