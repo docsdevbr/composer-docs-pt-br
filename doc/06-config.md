@@ -1301,7 +1301,7 @@ O padrão é `C:\Users\<usuário>\AppData\Roaming\Composer` no Windows,
 Diretório Base XDG, e `$COMPOSER_HOME` em outros sistemas Unix.
 Atualmente, é usado apenas para armazenar arquivos `composer.phar` anteriores,
 permitindo reverter para versões mais antigas.
-Veja também [COMPOSER_HOME](03-cli.md#composer-home).
+Consulte também [COMPOSER_HOME](03-cli.md#composer-home).
 
 Como o comando `self-update --rollback` restaura um `composer.phar` armazenado
 anteriormente neste diretório, ele deve ter permissão de escrita apenas para o
@@ -1318,7 +1318,7 @@ O padrão é `C:\Users\<usuário>\AppData\Local\Composer` no Windows,
 em sistemas Unix que seguem as Especificações de Diretório Base XDG, e
 `$COMPOSER_HOME/cache` em outros sistemas Unix.
 Armazena todos os caches usados pelo Composer.
-Veja também [COMPOSER_HOME](03-cli.md#composer-home).
+Consulte também [COMPOSER_HOME](03-cli.md#composer-home).
 
 ## cache-files-dir
 
@@ -1398,7 +1398,7 @@ Se for `true`, sempre otimiza ao gerar o autoloader.
 
 O padrão é `false`.
 Se for `true`, o comando `require` mantém os pacotes ordenados por nome no
-`composer.json` ao adicionar um novo pacote.
+`composer.json` ao adicionar um pacote.
 
 ## classmap-authoritative
 
@@ -1424,7 +1424,7 @@ Isso é usado para configurações do GitHub Enterprise.
 
 O padrão é `true`.
 Se definido como `false`, os tokens OAuth criados para acessar a API do GitHub
-conterão uma data em vez do nome do host da máquina.
+conterão uma data em vez do nome de host da máquina.
 
 ## use-github-api
 
@@ -1516,8 +1516,8 @@ terão suas versões atualizadas.
 
 O padrão é `false`.
 Ignora erros durante o `install` caso existam requisitos ausentes — ou seja,
-quando o arquivo lock não está atualizado em relação às alterações mais recentes
-no `composer.json`.
+quando o arquivo de lock não está atualizado em relação às alterações mais
+recentes no `composer.json`.
 
 ## update-with-minimal-changes
 
