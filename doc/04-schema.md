@@ -122,7 +122,7 @@ Por padrão, o Composer oferece suporte a quatro tipos:
   [instalador do SilverStripe](https://github.com/silverstripe/silverstripe-installer)
   ou aplicações completas distribuídas como pacotes.
   Isto pode ser usado, por exemplo, pelas IDEs para fornecer listagens de
-  projetos a serem inicializados ao criar um novo workspace.
+  projetos a serem inicializados ao criar um workspace.
 - **metapackage:** um pacote vazio que contém requisitos e acionará suas
   instalações, mas não contém nenhum arquivo e não gravará nada no sistema de
   arquivos.
