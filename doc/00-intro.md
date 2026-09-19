@@ -173,7 +173,7 @@ seguindo
 [as instruções da página de download](https://getcomposer.org/download/) para
 baixar o arquivo `composer.phar`.
 
-Crie um novo arquivo `composer.bat` junto ao `composer.phar`:
+Crie um arquivo `composer.bat` junto ao `composer.phar`:
 
 Usando o `cmd.exe`:
 
@@ -229,7 +229,7 @@ COPY --from=composer/composer:2-bin /composer /usr/bin/composer
 ```
 
 **Nota:** você precisa instalar manualmente outras dependências de tempo de
-execução dentro da sua imagem ao usar este método; veja também
+execução dentro da sua imagem ao usar este método; consulte também
 https://github.com/composer/composer/blob/main/README.md#binary-dependencies.
 
 Leia a [descrição da imagem](https://hub.docker.com/r/composer/composer) para
