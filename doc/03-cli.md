@@ -273,8 +273,8 @@ php composer.phar update vendor/pacote:2.0.1 vendor/pacote2:3.0.*
 * **--no-blocking:** desabilita todo o bloqueio de dependências baseado em
   políticas durante a execução deste comando.
   Consulte também [COMPOSER_NO_BLOCKING](#composer-no-blocking).
-* **--lock:** sobrescreve o hash do arquivo de lock para suprimir o alerta de
-  que o arquivo de lock está desatualizado, sem atualizar as versões dos
+* **--lock:** sobrescreve o hash do arquivo de bloqueio para suprimir o alerta
+  de que o arquivo de bloqueio está desatualizado, sem atualizar as versões dos
   pacotes.
   Metadados dos pacotes, como mirrors e URLs, são atualizados caso tenham
   sofrido alterações.
@@ -625,8 +625,8 @@ você tenha as dependências de plataforma necessárias.
 
 ### Opções
 
-* **--lock:** verifica as dependências apenas a partir do arquivo de lock, e não
-  dos pacotes instalados.
+* **--lock:** verifica as dependências apenas a partir do arquivo de bloqueio, e
+  não dos pacotes instalados.
 * **--no-dev:** desabilita a verificação das dependências dos pacotes listados
   em `require-dev`.
 * **--format (-f):** formato da saída: `text` (padrão) ou `json`.
@@ -836,7 +836,7 @@ O código de cores é o seguinte:
 * **--format (-f):** permite escolher entre o formato de saída de texto (padrão)
   ou JSON.
 * **--no-dev:** não exibe dependências de desenvolvimento desatualizadas.
-* **--locked:** exibe as atualizações dos pacotes do arquivo de lock,
+* **--locked:** exibe as atualizações dos pacotes do arquivo de bloqueio,
   independentemente do que está atualmente no diretório `vendor`.
 * **--ignore-platform-reqs:** ignora todos os requisitos de plataforma (`php`,
   `hhvm`, `lib-*` e `ext-*`) e força a instalação, mesmo que a máquina local não
@@ -989,8 +989,8 @@ php composer.phar validate
   usarem restrições de versão não associadas ou excessivamente rígidas.
 * **--no-check-lock:** não emite um erro se o `composer.lock` existir e não
   estiver atualizado.
-* **--check-lock** verifica se o arquivo de lock está atualizado (mesmo quando
-  [config.lock](06-config.md#lock) é falso).
+* **--check-lock** verifica se o arquivo de bloqueio está atualizado (mesmo
+  quando [config.lock](06-config.md#lock) é falso).
 * **--no-check-publish:** não emite um erro se o `composer.json` não for
   adequado para publicação como um pacote no Packagist, mas for válido.
 * **--no-check-version:** não emite um erro se o campo de versão estiver
@@ -1324,8 +1324,8 @@ Por padrão, o comando procura por pacotes no [Packagist](https://packagist.org)
   Você pode usar esta opção várias vezes para configurar vários repositórios.
 * **--add-repository:** adiciona um repositório personalizado ao
   `composer.json`.
-  Se um arquivo de lock estiver presente, ele será excluído e uma atualização
-  será executada, ao invés de uma instalação.
+  Se um arquivo de bloqueio estiver presente, ele será excluído e uma
+  atualização será executada, ao invés de uma instalação.
 * **--dev:** instala os pacotes listados em `require-dev`.
 * **--no-dev:** ignora a instalação dos pacotes listados em `require-dev`.
 * **--no-scripts:** ignora a execução dos scripts definidos no pacote raiz.
@@ -1361,8 +1361,8 @@ Por padrão, o comando procura por pacotes no [Packagist](https://packagist.org)
   É possível ignorar múltiplos requisitos usando curingas.
 * **--require:** exige que pacotes adicionais sejam incluídos no `composer.json`
   após a instalação do projeto.
-  Se um arquivo de lock estiver presente, ele será excluído e uma atualização
-  será executada em vez de uma instalação.
+  Se um arquivo de bloqueio estiver presente, ele será excluído e uma
+  atualização será executada em vez de uma instalação.
   Pode ser especificado várias vezes para múltiplos pacotes.
   Deve seguir o formato `foo/bar:1.0.0` caso você queira especificar uma
   restrição de versão.
@@ -1433,7 +1433,7 @@ Use `--format=json` para obter uma saída legível para máquinas.
 
 ### Opções
 
-* **--locked:** lista as licenças do arquivo de lock, independentemente do
+* **--locked:** lista as licenças do arquivo de bloqueio, independentemente do
   conteúdo atual do diretório `vendor`.
 * **--format:** formato da saída: `text`, `json` ou `summary` (padrão: `text`).
 * **--no-dev:** remove as dependências de desenvolvimento da saída.
@@ -1518,8 +1518,8 @@ php composer.phar audit
 * **--no-dev:** desabilita a auditoria de pacotes listados em `require-dev`.
 * **--format (-f):** formato de saída da auditoria.
   Deve ser "table" (padrão), "plain", "json" ou "summary".
-* **--locked:** audita pacotes a partir do arquivo de lock, independentemente do
-  que está atualmente no diretório `vendor`.
+* **--locked:** audita pacotes a partir do arquivo de bloqueio,
+  independentemente do que está atualmente no diretório `vendor`.
 * **--abandoned:** comportamento em relação a pacotes abandonados.
   Deve ser "ignore", "report" ou "fail".
   Consulte também [config.audit.abandoned](06-config.md#abandoned).
@@ -1560,7 +1560,7 @@ Por exemplo:
 COMPOSER=outro-composer.json php composer.phar install
 ```
 
-O arquivo de lock gerado usará o mesmo nome: `outro-composer.lock` neste
+O arquivo de bloqueio gerado usará o mesmo nome: `outro-composer.lock` neste
 exemplo.
 
 ### COMPOSER_ALLOW_SUPERUSER

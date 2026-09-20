@@ -163,9 +163,9 @@ continuam funcionando, mesmo que tenham sido lançadas muitas versões novas
 dessas dependências desde então.
 (Observe a nota abaixo sobre o uso do comando `update`.)
 
-> **Nota:** Para bibliotecas, não é necessário fazer o commit do arquivo de lock;
-> consulte também:
-> [Bibliotecas - Arquivo de lock](02-libraries.md#arquivo-de-lock).
+> **Nota:** Para bibliotecas, não é necessário fazer o commit do arquivo de
+> bloqueio; consulte também:
+> [Bibliotecas - Arquivo de bloqueio](02-libraries.md#arquivo-de-bloqueio).
 
 ### Instalando a partir do `composer.lock`
 
@@ -208,7 +208,7 @@ automaticamente as versões mais recentes das suas dependências.
 Para atualizar para as versões mais recentes, use o comando
 [`update`](03-cli.md#update-u).
 Ele buscará as versões correspondentes mais recentes (de acordo com seu arquivo
-`composer.json`) e atualizará o arquivo de lock com as novas versões.
+`composer.json`) e atualizará o arquivo de bloqueio com as novas versões.
 
 ```shell
 php composer.phar update

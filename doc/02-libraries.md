@@ -83,17 +83,17 @@ Para mais informações sobre como o Composer trata tags e branches e como ele
 resolve restrições de versão de pacote, leia o artigo sobre
 [versões](articles/versions.md).
 
-## Arquivo de lock
+## Arquivo de bloqueio
 
 Para sua biblioteca, você pode fazer o commit do arquivo `composer.lock`, se
 quiser.
 Isso pode ajudar o seu time a testar sempre com as mesmas versões das
 dependências.
-No entanto, esse arquivo de lock não terá nenhum efeito em outros projetos que
-dependem da sua biblioteca.
+No entanto, esse arquivo de bloqueio não terá nenhum efeito em outros projetos
+que dependem da sua biblioteca.
 Ele só tem efeito no projeto principal.
 
-Se você não quiser fazer o commit do arquivo de lock e estiver usando o git,
+Se você não quiser fazer o commit do arquivo de bloqueio e estiver usando o git,
 adicione-o ao `.gitignore`.
 
 ## Publicando em um VCS

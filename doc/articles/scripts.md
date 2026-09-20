@@ -6,113 +6,129 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: Script are callbacks that are called before/after installing packages
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/scripts.md
+source_revision: fee2383ed5bb0dfd95315997cd789fa8d37f2f47
+translation_status: ready
+
+tagline: >-
+  Scripts são funções de retorno invocadas antes ou depois da instalação de
+  pacotes.
 ---
 
 # Scripts
 
-## What is a script?
+## O que é um script?
 
-A script, in Composer's terms, can either be a PHP callback (defined as a
-static method) or any command-line executable command. Scripts are useful
-for executing a package's custom code or package-specific commands during
-the Composer execution process.
+Um script, na terminologia do Composer, pode ser uma função de retorno PHP
+(definida como um método estático) ou qualquer comando executável via linha de
+comando.
+Scripts são úteis para executar código personalizado de um pacote ou comandos
+específicos do pacote durante o processo de execução do Composer.
 
-As of Composer 2.5 scripts can also be Symfony Console Command classes,
-which allows you to easily run them including passing options. This is
-however not recommended for handling events.
+A partir do Composer 2.5, scripts também podem ser classes de comando do Symfony
+Console, o que permite executá-los facilmente, inclusive passando opções.
+No entanto, isso não é recomendado para lidar com eventos.
 
-> **Note:** Only scripts defined in the root package's `composer.json` are
-> executed. If a dependency of the root package specifies its own scripts,
-> Composer does not execute those additional scripts.
+> **Nota:** Apenas scripts definidos no arquivo `composer.json` do pacote raiz
+> são executados.
+> Se uma dependência do pacote raiz especificar seus próprios scripts, o
+> Composer não executará esses scripts adicionais.
 
-## Event names
+## Nomes de eventos
 
-Composer fires the following named events during its execution process:
+O Composer dispara os seguintes eventos nomeados durante seu processo de
+execução:
 
-### Command Events
+### Eventos de comando
 
-- **pre-install-cmd**: occurs before the `install` command is executed with a
-  lock file present.
-- **post-install-cmd**: occurs after the `install` command has been executed
-  with a lock file present.
-- **pre-update-cmd**: occurs before the `update` command is executed, or before
-  the `install` command is executed without a lock file present.
-- **post-update-cmd**: occurs after the `update` command has been executed, or
-  after the `install` command has been executed without a lock file present.
-- **pre-status-cmd**: occurs before the `status` command is executed.
-- **post-status-cmd**: occurs after the `status` command has been executed.
-- **pre-archive-cmd**: occurs before the `archive` command is executed.
-- **post-archive-cmd**: occurs after the `archive` command has been executed.
-- **pre-autoload-dump**: occurs before the autoloader is dumped, either during
-  `install`/`update`, or via the `dump-autoload` command.
-- **post-autoload-dump**: occurs after the autoloader has been dumped, either
-  during `install`/`update`, or via the `dump-autoload` command.
-- **post-root-package-install**: occurs after the root package has been
-  installed during the `create-project` command (but before its
-  dependencies are installed).
-- **post-create-project-cmd**: occurs after the `create-project` command has
-  been executed.
+- **pre-install-cmd**: ocorre antes da execução do comando `install`, quando um
+  arquivo de bloqueio está presente.
+- **post-install-cmd**: ocorre após a execução do comando `install`, quando um
+  arquivo de bloqueio está presente.
+- **pre-update-cmd**: ocorre antes da execução do comando `update`, ou antes da
+  execução do comando `install` quando não há um arquivo de bloqueio presente.
+- **post-update-cmd**: ocorre após a execução do comando `update`, ou após a
+  execução do comando `install` quando não há um arquivo de bloqueio presente.
+- **pre-status-cmd**: ocorre antes da execução do comando `status`.
+- **post-status-cmd**: ocorre após a execução do comando `status`.
+- **pre-archive-cmd**: ocorre antes da execução do comando `archive`.
+- **post-archive-cmd**: ocorre após a execução do comando `archive`.
+- **pre-autoload-dump**: ocorre antes da geração do autoloader, seja durante
+  `install`/`update` ou via comando `dump-autoload`.
+- **post-autoload-dump**: ocorre após a geração do autoloader, seja durante
+  `install`/`update` ou via comando `dump-autoload`.
+- **post-root-package-install**: ocorre após a instalação do pacote raiz
+  durante o comando `create-project` (mas antes da instalação de suas
+  dependências).
+- **post-create-project-cmd**: ocorre após a execução do comando
+  `create-project`.
 
-### Installer Events
+### Eventos do instalador
 
-- **pre-operations-exec**: occurs before the install/upgrade/.. operations
-  are executed when installing a lock file. Plugins that need to hook into
-  this event will need to be installed globally to be usable, as otherwise
-  they would not be loaded yet when a fresh install of a project happens.
+- **pre-operations-exec**: ocorre antes da execução das operações de
+  instalação/atualização/etc. ao instalar um arquivo de bloqueio.
+  Plugins que precisem interagir com este evento devem ser instalados
+  globalmente para poderem ser utilizados; caso contrário, não seriam carregados
+  a tempo durante uma instalação inicial do projeto.
 
-### Package Events
+### Eventos de pacote
 
-- **pre-package-install**: occurs before a package is installed.
-- **post-package-install**: occurs after a package has been installed.
-- **pre-package-update**: occurs before a package is updated.
-- **post-package-update**: occurs after a package has been updated.
-- **pre-package-uninstall**: occurs before a package is uninstalled.
-- **post-package-uninstall**: occurs after a package has been uninstalled.
+- **pre-package-install**: ocorre antes da instalação de um pacote.
+- **post-package-install**: ocorre após a instalação de um pacote.
+- **pre-package-update**: ocorre antes da atualização de um pacote.
+- **post-package-update**: ocorre após a atualização de um pacote.
+- **pre-package-uninstall**: ocorre antes da desinstalação de um pacote.
+- **post-package-uninstall**: ocorre após a desinstalação de um pacote.
 
-### Plugin Events
+### Eventos de plugin
 
-- **init**: occurs after a Composer instance is done being initialized.
-- **command**: occurs before any Composer Command is executed on the CLI. It
-  provides you with access to the input and output objects of the program.
-- **pre-file-download**: occurs before files are downloaded and allows
-  you to manipulate the `HttpDownloader` object prior to downloading files
-  based on the URL to be downloaded.
-- **post-file-download**: occurs after package dist files are downloaded and
-  allows you to perform additional checks on the file if required.
-- **pre-command-run**: occurs before a command is executed and allows you to
-  manipulate the `InputInterface` object's options and arguments to tweak
-  a command's behavior.
-- **pre-pool-create**: occurs before the Pool of packages is created, and lets
-  you filter the list of packages that is going to enter the Solver.
+- **init**: ocorre após a conclusão da inicialização de uma instância do
+  Composer.
+- **command**: ocorre antes da execução de qualquer comando do Composer na CLI.
+  Ele fornece acesso aos objetos de entrada e saída do programa.
+- **pre-file-download**: ocorre antes do download de arquivos e permite
+  manipular o objeto `HttpDownloader` antes de baixar os arquivos, com base na
+  URL que será baixada.
+- **post-file-download**: ocorre após o download dos arquivos de distribuição do
+  pacote e permite realizar verificações adicionais no arquivo, se necessário.
+- **pre-command-run**: ocorre antes da execução de um comando e permite
+  manipular as opções e argumentos do objeto `InputInterface` para ajustar o
+  comportamento do comando.
+- **pre-pool-create**: ocorre antes da criação do Pool de pacotes e permite
+  filtrar a lista de pacotes que será processada pelo Solver.
 
-> **Note:** Composer makes no assumptions about the state of your dependencies
-> prior to `install` or `update`. Therefore, you should not specify scripts
-> that require Composer-managed dependencies in the `pre-update-cmd` or
-> `pre-install-cmd` event hooks. If you need to execute scripts prior to
-> `install` or `update` please make sure they are self-contained within your
-> root package.
+> **Nota:** O Composer não faz suposições sobre o estado das suas dependências
+> antes da execução de `install` ou `update`.
+> Portanto, você não deve especificar scripts que exijam dependências
+> gerenciadas pelo Composer nos hooks de evento `pre-update-cmd` ou
+> `pre-install-cmd`.
+> Se precisar executar scripts antes de `install` ou `update`, certifique-se de
+> que eles sejam autossuficientes dentro do seu pacote raiz.
 
-## Defining scripts
+## Definindo scripts
 
-The root JSON object in `composer.json` should have a property called
-`"scripts"`, which contains pairs of named events and each event's
-corresponding scripts. An event's scripts can be defined as either a string
-(only for a single script) or an array (for single or multiple scripts.)
+O objeto JSON raiz no arquivo `composer.json` deve conter uma propriedade
+chamada `"scripts"`, que contém pares de nomes de eventos e os scripts
+correspondentes a cada evento.
+Os scripts de um evento podem ser definidos como uma string (apenas para um
+único script) ou como um array (para um ou múltiplos scripts).
 
-For any given event:
+Para qualquer evento:
 
-- Scripts execute in the order defined when their corresponding event is fired.
-- An array of scripts wired to a single event can contain both PHP callbacks
-and command-line executable commands.
-- PHP classes and commands containing defined callbacks must be autoloadable
-via Composer's autoload functionality.
-- Callbacks can only autoload classes from psr-0, psr-4 and classmap
-definitions. If a defined callback relies on functions defined outside of a
-class, the callback itself is responsible for loading the file containing these
-functions.
+- Os scripts são executados na ordem definida quando o evento correspondente é
+  disparado.
+- Um array de scripts associado a um único evento pode conter tanto funções de
+  retorno PHP quanto comandos executáveis via linha de comando.
+- Classes PHP e comandos que contenham funções de retorno definidas devem ser
+  carregáveis automaticamente por meio da funcionalidade de autoload do
+  Composer.
+- Funções de retorno só podem carregar automaticamente classes a partir de
+  definições PSR-0, PSR-4 e mapa de classes.
+  Se uma função de retorno definida depender de funções definidas fora de uma
+  classe, a própria função de retorno é responsável por carregar o arquivo que
+  contém essas funções.
 
-Script definition example:
+Exemplo de definição de script:
 
 ```json
 {
@@ -135,8 +151,8 @@ Script definition example:
 }
 ```
 
-Using the previous definition example, here's the class `MyVendor\MyClass`
-that might be used to execute the PHP callbacks:
+Usando o exemplo de definição anterior, aqui está a classe `MyVendor\MyClass`
+que pode ser usada para executar as funções de retorno PHP:
 
 ```php
 <?php
@@ -175,86 +191,110 @@ class MyClass
 }
 ```
 
-**Note:** During a Composer `install` or `update` command run, a variable named
-`COMPOSER_DEV_MODE` will be added to the environment. If the command was run
-with the `--no-dev` flag, this variable will be set to 0, otherwise it will be
-set to 1. The variable is also available while `dump-autoload` runs, and it
-will be set to the same as the last `install` or `update` was run in.
+> **Nota:** Durante a execução de um comando `install` ou `update` do Composer,
+> uma variável chamada `COMPOSER_DEV_MODE` será adicionada ao ambiente.
+> Se o comando tiver sido executado com a flag `--no-dev`, essa variável será
+> definida como 0; caso contrário, será definida como 1.
+> A variável também fica disponível durante a execução do `dump-autoload`,
+> mantendo o mesmo valor definido na última execução de `install` ou `update`.
 
-## Event classes
+## Classes de eventos
 
-When an event is fired, your PHP callback receives as first argument a
-`Composer\EventDispatcher\Event` object. This object has a `getName()` method
-that lets you retrieve the event name.
+Quando um evento é disparado, sua função de retorno PHP recebe, como primeiro
+argumento, um objeto `Composer\EventDispatcher\Event`.
+Esse objeto possui um método `getName()` que permite obter o nome do evento.
 
-Depending on the [script types](#event-names) you will get various event
-subclasses containing various getters with relevant data and associated
-objects:
+Dependendo dos [tipos de script](#nomes-de-eventos), você obterá várias
+subclasses de evento contendo diversos métodos getter com dados relevantes e
+objetos associados:
 
-- Base class: [`Composer\EventDispatcher\Event`](https://github.com/composer/composer/blob/main/src/Composer/EventDispatcher/Event.php)
-- Command Events: [`Composer\Script\Event`](https://github.com/composer/composer/blob/main/src/Composer/Script/Event.php)
-- Installer Events: [`Composer\Installer\InstallerEvent`](https://github.com/composer/composer/blob/main/src/Composer/Installer/InstallerEvent.php)
-- Package Events: [`Composer\Installer\PackageEvent`](https://github.com/composer/composer/blob/main/src/Composer/Installer/PackageEvent.php)
-- Plugin Events:
-  - init: [`Composer\EventDispatcher\Event`](https://github.com/composer/composer/blob/main/src/Composer/EventDispatcher/Event.php)
-  - command: [`Composer\Plugin\CommandEvent`](https://github.com/composer/composer/blob/main/src/Composer/Plugin/CommandEvent.php)
-  - pre-file-download: [`Composer\Plugin\PreFileDownloadEvent`](https://github.com/composer/composer/blob/main/src/Composer/Plugin/PreFileDownloadEvent.php)
-  - post-file-download: [`Composer\Plugin\PostFileDownloadEvent`](https://github.com/composer/composer/blob/main/src/Composer/Plugin/PostFileDownloadEvent.php)
+- Classe base:
+  [`Composer\EventDispatcher\Event`](https://github.com/composer/composer/blob/main/src/Composer/EventDispatcher/Event.php)
+- Eventos de comando:
+  [`Composer\Script\Event`](https://github.com/composer/composer/blob/main/src/Composer/Script/Event.php)
+- Eventos do instalador:
+  [`Composer\Installer\InstallerEvent`](https://github.com/composer/composer/blob/main/src/Composer/Installer/InstallerEvent.php)
+- Eventos de pacote:
+  [`Composer\Installer\PackageEvent`](https://github.com/composer/composer/blob/main/src/Composer/Installer/PackageEvent.php)
+- Eventos de plugin:
+  - init:
+    [`Composer\EventDispatcher\Event`](https://github.com/composer/composer/blob/main/src/Composer/EventDispatcher/Event.php)
+  - command:
+    [`Composer\Plugin\CommandEvent`](https://github.com/composer/composer/blob/main/src/Composer/Plugin/CommandEvent.php)
+  - pre-file-download:
+    [`Composer\Plugin\PreFileDownloadEvent`](https://github.com/composer/composer/blob/main/src/Composer/Plugin/PreFileDownloadEvent.php)
+  - post-file-download:
+    [`Composer\Plugin\PostFileDownloadEvent`](https://github.com/composer/composer/blob/main/src/Composer/Plugin/PostFileDownloadEvent.php)
 
-## Running scripts manually
+## Executando scripts manualmente
 
-If you would like to run the scripts for an event manually, the syntax is:
+Se você quiser executar manualmente os scripts de um evento, a sintaxe é:
 
 ```shell
 php composer.phar run-script [--dev] [--no-dev] script
 ```
 
-For example `composer run-script post-install-cmd` will run any
-**post-install-cmd** scripts and [plugins](plugins.md) that have been defined.
+Por exemplo, `composer run-script post-install-cmd` executará quaisquer scripts
+e [plugins](plugins.md) definidos para o evento **post-install-cmd**.
 
-You can also give additional arguments to the script handler by appending `--`
-followed by the handler arguments. e.g.
-`composer run-script post-install-cmd -- --check` will pass`--check` along to
-the script handler. Those arguments are received as CLI arg by CLI handlers,
-and can be retrieved as an array via `$event->getArguments()` by PHP handlers.
+Você também pode fornecer argumentos adicionais ao manipulador do script
+adicionando `--` seguido pelos argumentos do manipulador.
+Por exemplo: `composer run-script post-install-cmd -- --check` passará `--check`
+para o manipulador do script.
+Esses argumentos são recebidos como argumentos de CLI por manipuladores de CLI
+e podem ser recuperados como um array via `$event->getArguments()` por
+manipuladores PHP.
 
-## Writing custom commands
+## Criando comandos personalizados
 
-If you add custom scripts that do not fit one of the predefined event name
-above, you can either run them with run-script or also run them as native
-Composer commands. For example the handler defined below is executable by
-running `composer test`:
+Se você adicionar scripts personalizados que não se enquadram em nenhum dos
+nomes de eventos predefinidos acima, você pode executá-los com `run-script` ou
+como comandos nativos do Composer.
+Por exemplo, o manipulador definido abaixo pode ser executado chamando
+`composer test`:
 
 ```json
 {
     "scripts": {
         "test": "phpunit",
-        "do-something": "MyVendor\\MyClass::doSomething"
+        "do-something": "MyVendor\\MyClass::doSomething",
         "my-cmd": "MyVendor\\MyCommand"
     }
 }
 ```
 
-Similar to the `run-script` command you can give additional arguments to scripts,
-e.g. `composer test -- --filter <pattern>` will pass `--filter <pattern>` along
-to the `phpunit` script.
+Assim como no comando `run-script`, você pode passar argumentos adicionais para
+os scripts; por exemplo, `composer test -- --filter <pattern>` repassará
+`--filter <pattern>` para o script `phpunit`.
 
-Using a PHP method via `composer do-something arg` lets you execute a
-`static function doSomething(\Composer\Script\Event $event)` and `arg` becomes
-available in `$event->getArguments()`. This however does not let you easily pass
-custom options in the form of `--flags`.
+Invocar um método PHP via `composer do-something arg` permite executar uma
+`static function doSomething(\Composer\Script\Event $event)`, tornando o
+argumento `arg` disponível em `$event->getArguments()`.
+No entanto, isso não facilita a passagem de opções personalizadas na forma de
+`--flags`.
 
-Using a [symfony/console](https://packagist.org/packages/symfony/console) `Command`
-class you can define and access arguments and options more easily.
+Ao utilizar uma classe `Command` do
+[symfony/console](https://packagist.org/packages/symfony/console), você pode
+descrever seu script e definir ou acessar argumentos e opções com mais
+facilidade.
 
-For example with the command below you can then simply call `composer my-cmd
---arbitrary-flag` without even the need for a `--` separator. To be detected
-as symfony/console commands the class name must end with `Command` and extend
-symfony's `Command` class. Also note that this will run using Composer's built-in
-symfony/console version which may not match the one you have required in your
-project, and may change between Composer minor releases. If you need more
-safety guarantees you should rather use your own binary file that runs your own
-symfony/console version in isolation in its own process then.
+Por exemplo, com o comando abaixo, você pode simplesmente chamar
+`composer my-cmd --arbitrary-flag` sem sequer precisar do separador `--`.
+Para serem detectadas como comandos do symfony/console, as classes devem
+terminar com o sufixo `Command` e estender a classe `Command` do Symfony.
+Observe também que a execução ocorrerá utilizando a versão do symfony/console
+integrada ao Composer; essa versão pode diferir daquela definida em seu projeto
+e pode mudar entre versões menores do Composer.
+Se precisar de mais garantias de estabilidade, é preferível utilizar seu próprio
+arquivo binário para executar sua versão específica do symfony/console de forma
+isolada, em seu próprio processo.
+
+Os nomes e descrições de scripts definidos em uma classe `Command` substituirão
+os detalhes presentes no `composer.json`: a chave da entrada em `scripts`
+(utilizada como o comando passado ao `run-script`) será substituída por
+`$defaultName` ou pelo valor definido em `setName()`; uma substituição
+semelhante ocorrerá com qualquer informação incluída em `scripts-descriptions`
+para essa classe de script.
 
 ```php
 <?php
@@ -271,16 +311,23 @@ class MyCommand extends Command
 {
     protected function configure(): void
     {
-        $this->setDefinition([
-            new InputOption('arbitrary-flag', null, InputOption::VALUE_NONE, 'Example flag'),
-            new InputArgument('foo', InputArgument::OPTIONAL, 'Optional arg'),
-        ]);
+        $this
+//          ->setName('custom-cmd') //if this gets included, it would execute with `composer custom-cmd` instead
+            ->setDescription('Custom description for this command')
+            ->setDefinition([
+                new InputOption('arbitrary-flag', null, InputOption::VALUE_NONE, 'Example flag'),
+                new InputArgument('foo', InputArgument::OPTIONAL, 'Optional arg'),
+            ])
+            ->setHelp(
+                "Here you can define a long description for your command\n".
+                "This would be visible with composer my-cmd --help"
+            );
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('arbitrary-flag')) {
-            $output->writeln('The flag was used')
+            $output->writeln('The flag was used');
         }
 
         return 0;
@@ -288,27 +335,30 @@ class MyCommand extends Command
 }
 ```
 
-> **Note:** Before executing scripts, Composer's bin-dir is temporarily pushed
-> on top of the PATH environment variable so that binaries of dependencies
-> are directly accessible. In this example no matter if the `phpunit` binary is
-> actually in `vendor/bin/phpunit` or `bin/phpunit` it will be found and executed.
+> **Nota:** Antes de executar scripts, o diretório de binários (`bin-dir`) do
+> Composer é temporariamente adicionado ao início da variável de ambiente
+> `PATH`, de modo que os binários das dependências fiquem diretamente
+> acessíveis.
+> Neste exemplo, independentemente de o binário `phpunit` estar localizado em `vendor/bin/phpunit` ou em `bin/phpunit`, ele será encontrado e executado.
 
+## Gerenciando o tempo limite do processo
 
-## Managing the process timeout
+Embora o Composer não tenha como objetivo gerenciar processos de longa duração
+ou outros aspectos semelhantes de projetos PHP, às vezes pode ser útil desativar
+o tempo limite do processo em comandos personalizados.
+Esse tempo limite é de 300 segundos por padrão e pode ser alterado de várias
+maneiras, dependendo do efeito desejado:
 
-Although Composer is not intended to manage long-running processes and other
-such aspects of PHP projects, it can sometimes be handy to disable the process
-timeout on custom commands. This timeout defaults to 300 seconds and can be
-overridden in a variety of ways depending on the desired effect:
+- Desabilite-o para todos os comandos usando a chave de configuração
+  `process-timeout`.
+- Desabilite-o para invocações atuais ou futuras do Composer usando a variável
+  de ambiente `COMPOSER_PROCESS_TIMEOUT`.
+- Desabilite-o para uma invocação específica, usando a flag `--timeout` do
+  comando `run-script`.
+- Desabilite-o usando um método auxiliar estático para scripts específicos.
 
-- disable it for all commands using the config key `process-timeout`,
-- disable it for the current or future invocations of composer using the
-  environment variable `COMPOSER_PROCESS_TIMEOUT`,
-- for a specific invocation using the `--timeout` flag of the `run-script` command,
-- using a static helper for specific scripts.
-
-To disable the timeout for specific scripts with the static helper directly in
-composer.json:
+Para desabilitar o tempo limite de scripts específicos usando o método auxiliar
+estático diretamente no `composer.json`:
 
 ```json
 {
@@ -321,8 +371,8 @@ composer.json:
 }
 ```
 
-To disable the timeout for every script on a given project, you can use the
-composer.json configuration:
+Para desativar o tempo limite para todos os scripts de um determinado projeto,
+você pode usar a configuração do `composer.json`:
 
 ```json
 {
@@ -332,24 +382,24 @@ composer.json configuration:
 }
 ```
 
-It's also possible to set the global environment variable to disable the timeout
-of all following scripts in the current terminal environment:
+Também é possível definir a variável de ambiente global para desativar o tempo
+limite de todos os scripts subsequentes no ambiente do terminal atual:
 
 ```shell
 export COMPOSER_PROCESS_TIMEOUT=0
 ```
 
-To disable the timeout of a single script call, you must use the `run-script` composer
-command and specify the `--timeout` parameter:
+Para desativar o tempo limite de uma chamada de script específica, você deve
+usar o comando `run-script` do Composer e especificar o parâmetro `--timeout`:
 
 ```shell
 php composer.phar run-script --timeout=0 test
 ```
 
-## Referencing scripts
+## Referenciando scripts
 
-To enable script re-use and avoid duplicates, you can call a script from another
-one by prefixing the command name with `@`:
+Para permitir a reutilização de scripts e evitar duplicatas, você pode chamar um
+script a partir de outro prefixando o nome do comando com `@`:
 
 ```json
 {
@@ -363,7 +413,7 @@ one by prefixing the command name with `@`:
 }
 ```
 
-You can also refer a script and pass it new arguments:
+Você também pode referenciar um script e passar novos argumentos para ele:
 
 ```json
 {
@@ -374,10 +424,9 @@ You can also refer a script and pass it new arguments:
 }
 ```
 
-## Calling Composer commands
+## Chamando comandos do Composer
 
-To call Composer commands, you can use `@composer` which will automatically
-resolve to whatever composer.phar is currently being used:
+Para chamar comandos do Composer, você pode usar `@composer`, que será resolvido automaticamente para o `composer.phar` que estiver sendo utilizado no momento:
 
 ```json
 {
@@ -390,14 +439,14 @@ resolve to whatever composer.phar is currently being used:
 }
 ```
 
-One limitation of this is that you can not call multiple composer commands in
-a row like `@composer install && @composer foo`. You must split them up in a
-JSON array of commands.
+Uma limitação disso é que você não pode executar vários comandos do Composer em
+sequência, como `@composer install && @composer foo`.
+Você deve separá-los em um array JSON de comandos.
 
-## Executing PHP scripts
+## Executando scripts PHP
 
-To execute PHP scripts, you can use `@php` which will automatically
-resolve to whatever php process is currently being used:
+Para executar scripts PHP, você pode usar `@php`, que será automaticamente
+resolvido para o processo PHP que estiver sendo utilizado no momento:
 
 ```json
 {
@@ -410,16 +459,54 @@ resolve to whatever php process is currently being used:
 }
 ```
 
-One limitation of this is that you can not call multiple commands in
-a row like `@php install && @php foo`. You must split them up in a
-JSON array of commands.
+Uma limitação disso é que você não pode chamar vários comandos em sequência,
+como `@php install && @php foo`.
+Você deve separá-los em um array JSON de comandos.
 
-You can also call a shell/bash script, which will have the path to
-the PHP executable available in it as a `PHP_BINARY` env var.
+Você também pode chamar um script shell/bash, que terá o caminho para o
+executável do PHP disponível como uma variável de ambiente `PHP_BINARY`.
 
-## Setting environment variables
+## Controlando argumentos adicionais
 
-To set an environment variable in a cross-platform way, you can use `@putenv`:
+A partir do Composer 2.8, você pode controlar como argumentos adicionais são
+passados para comandos de script.
+
+Ao executar scripts como `composer script-name arg arg2` ou
+`composer script-name -- --option`, o Composer, por padrão, anexará `arg`,
+`arg2` e `--option` ao comando do script.
+
+Se você não quiser esses argumentos em um determinado comando, pode incluir
+`@no_additional_args` em qualquer parte dele; isso desativa o comportamento
+padrão e a própria flag será removida antes da execução do comando.
+
+Se você quiser que os argumentos sejam adicionados em outro lugar que não seja o
+final, pode usar `@additional_args` para escolher exatamente onde eles devem
+ficar.
+
+Por exemplo, ao executar `composer run-commands ARG` com a configuração abaixo:
+
+```json
+{
+    "scripts": {
+        "run-commands": [
+            "echo hello @no_additional_args",
+            "command-with-args @additional_args && do-something-without-args --here"
+        ]
+    }
+}
+```
+
+Acabaria executando estes comandos:
+
+```
+echo hello
+command-with-args ARG && do-something-without-args --here
+```
+
+## Definindo variáveis de ambiente
+
+Para definir uma variável de ambiente de forma multiplataforma, você pode usar
+`@putenv`:
 
 ```json
 {
@@ -432,9 +519,10 @@ To set an environment variable in a cross-platform way, you can use `@putenv`:
 }
 ```
 
-## Custom descriptions
+## Descrições personalizadas
 
-You can set custom script descriptions with the following in your `composer.json`:
+Você pode definir descrições personalizadas para scripts usando o seguinte no
+seu `composer.json`:
 
 ```json
 {
@@ -444,14 +532,16 @@ You can set custom script descriptions with the following in your `composer.json
 }
 ```
 
-The descriptions are used in `composer list` or `composer run -l` commands to
-describe what the scripts do when the command is run.
+As descrições são utilizadas nos comandos `composer list` ou `composer run -l`
+para descrever o que os scripts fazem quando o comando é executado.
 
-> **Note:** You can only set custom descriptions of custom commands.
+> **Nota:** Você só pode definir descrições personalizadas para comandos
+> personalizados.
 
-## Custom aliases
+## Aliases personalizados
 
-As of Composer 2.7, you can set custom script aliases with the following in your `composer.json`:
+A partir do Composer 2.7, você pode definir aliases personalizados para scripts
+utilizando o seguinte no seu `composer.json`:
 
 ```json
 {
@@ -461,6 +551,7 @@ As of Composer 2.7, you can set custom script aliases with the following in your
 }
 ```
 
-The aliases provide alternate command names.
+Os aliases fornecem nomes de comando alternativos.
 
-> **Note:** You can only set custom aliases of custom commands.
+> **Nota:** Você só pode definir aliases personalizados para comandos
+> personalizados.

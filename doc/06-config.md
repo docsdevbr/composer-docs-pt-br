@@ -1516,7 +1516,7 @@ terão suas versões atualizadas.
 
 O padrão é `false`.
 Ignora erros durante o `install` caso existam requisitos ausentes — ou seja,
-quando o arquivo de lock não está atualizado em relação às alterações mais
+quando o arquivo de bloqueio não está atualizado em relação às alterações mais
 recentes no `composer.json`.
 
 ## update-with-minimal-changes

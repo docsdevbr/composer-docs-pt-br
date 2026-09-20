@@ -791,7 +791,7 @@ anexada à URL ao executar `svn co`.
 >   `version`.
 > - O Composer não atualizará as referências dos commits, portanto, se você usar
 >   `master` como referência, terá que excluir o pacote para forçar uma
->   atualização e terá que lidar com um arquivo de lock instável.
+>   atualização e terá que lidar com um arquivo de bloqueio instável.
 
 A chave `package` em um repositório `package` pode ser definida como um array
 para definir várias versões de um pacote:
@@ -1017,9 +1017,9 @@ Você pode configurar como a referência `dist` do pacote (que aparece no arquiv
 
 Existem os seguintes modos:
 - `none`: a referência será sempre nula.
-  Isso pode ajudar a reduzir conflitos no arquivo de lock mas reduz a clareza
-  sobre quando ocorreu a última atualização e se o pacote está no estado mais
-  recente.
+  Isso pode ajudar a reduzir conflitos no arquivo de bloqueio mas reduz a
+  clareza sobre quando ocorreu a última atualização e se o pacote está no estado
+  mais recente.
 - `config`: a referência é construída com base em um hash do `composer.json` do
   pacote e da configuração do repositório.
 - `auto` (usado por padrão): a referência é construída com base no hash, como em

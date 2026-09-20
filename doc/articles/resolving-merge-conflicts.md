@@ -23,7 +23,7 @@ Resolver esses conflitos não é tão simples quanto em outros arquivos,
 especialmente no caso do arquivo `composer.lock`.
 
 > **Nota:** Pode não ficar imediatamente óbvio por que o merge baseada em texto
-> não é possível para arquivos de lock; então, vamos imaginar o seguinte
+> não é possível para arquivos de bloqueio; então, vamos imaginar o seguinte
 > exemplo, no qual queremos fazer o merge de dois branches:
 >
 > - O branch 1 adicionou o pacote A, que requer o pacote B.
@@ -81,15 +81,15 @@ do texto do arquivo sem problemas.
 Isso geralmente ocorre quando dois pacotes diferentes foram adicionados ou
 atualizados em cada lado do merge, sem sobreposição ou conflito de dependências.
 Quando isso acontece, executar `composer update --lock` pode ser suficiente para
-remover a marcação de conflito e atualizar o hash do arquivo de lock.
+remover a marcação de conflito e atualizar o hash do arquivo de bloqueio.
 Você também pode executar qualquer outra variante do comando `composer update`
 para remover a marcação de conflito e, potencialmente, atualizar os pacotes.
 
 ## Considerações importantes
 
-Lembre-se de que, sempre que ocorrerem conflitos de merge no arquivo de lock,
-perde-se a informação sobre a versão exata na qual os novos pacotes foram
-fixados em um dos branches.
+Lembre-se de que, sempre que ocorrerem conflitos de merge no arquivo de
+bloqueio, perde-se a informação sobre a versão exata na qual os novos pacotes
+foram fixados em um dos branches.
 Quando o pacote A no branch 1 está restrito a `^1.2.0` e fixado na versão
 `1.2.0`, ele pode ser atualizado se o branch 2 for usado como base e um novo
 comando `composer require package/A:^1.2.0` for executado; isso ocorre porque o
@@ -115,8 +115,8 @@ apresenta comportamento inesperado, pois o arquivo `composer.lock` não está
 Duas situações podem ocorrer nesse caso:
 
 1. Existem pacotes nas seções `require` ou `require-dev` do arquivo
-   `composer.json` que não constam no arquivo de lock e, consequentemente, nunca
-   são instalados.
+   `composer.json` que não constam no arquivo de bloqueio e, consequentemente,
+   nunca são instalados.
 
    > **Nota:** A partir da versão 2.5 do Composer, a presença de pacotes
    > requeridos, mas não estão no `composer.lock`, resulta em erro ao executar o
@@ -183,7 +183,7 @@ and prefer using the "require" command over editing the composer.json file direc
 Para corrigir isso, basta executar `composer update vendor/package-name` para
 cada pacote listado aqui.
 Após fazer isso para cada pacote listado, a execução de `composer validate`
-novamente não deve apresentar erros no arquivo de lock:
+novamente não deve apresentar erros no arquivo de bloqueio:
 
 ```shell
 ./composer.json is valid
