@@ -563,7 +563,7 @@ php composer.phar config [--global] --editor --auth
 Acesso a repositórios privados que exigem certificados TLS de cliente.
 
 Para configuração global ou em nível de projeto, consulte
-[Gerenciamento de pacotes privados: seção de segurança](handling-private-packages.md#security).
+[Gerenciando pacotes privados: seção de segurança](handling-private-packages.md#segurança).
 
 #### Autenticação manual com certificados TLS de cliente
 
