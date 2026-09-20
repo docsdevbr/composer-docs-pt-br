@@ -13,7 +13,7 @@ translation_status: ready
 tagline: Configure quais pacotes são encontrados em quais repositórios
 ---
 
-# Prioridades de repositório
+# Prioridade dos repositórios
 
 ## Repositórios canônicos
 
