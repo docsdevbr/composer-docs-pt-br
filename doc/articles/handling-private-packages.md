@@ -13,7 +13,7 @@ translation_status: ready
 tagline: Hospedando e instalando pacotes privados do Composer
 ---
 
-# Gerenciamento de pacotes privados
+# Gerenciando pacotes privados
 
 ## Private Packagist
 
