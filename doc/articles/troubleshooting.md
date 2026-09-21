@@ -6,175 +6,201 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: Solving problems
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/troubleshooting.md
+source_revision: 1e7857d682d3d88f9e108623b89f529eb4bf4ac7
+translation_status: ready
+
+tagline: Resolvendo problemas
 ---
 
-# Troubleshooting
+# Solução de problemas
 
-This is a list of common pitfalls on using Composer, and how to avoid them.
+Esta é uma lista de problemas comuns ao usar o Composer e como evitá-los.
 
+## Geral
 
-## General
+1. Ao enfrentar qualquer tipo de problema ao usar o Composer, certifique-se de
+   **utilizar a versão mais recente**.
+   Veja [self-update](../03-cli.md#self-update) para mais detalhes.
 
-1. When facing any kind of problems using Composer, be sure to **work with the
-   latest version**. See [self-update](../03-cli.md#self-update) for details.
+2. Antes de pedir ajuda, execute [`composer diagnose`](../03-cli.md#diagnose)
+   para verificar problemas comuns.
+   Se tudo estiver correto, prossiga para as próximas etapas.
 
-2. Before asking anyone, run [`composer diagnose`](../03-cli.md#diagnose) to check
-   for common problems. If it all checks out, proceed to the next steps.
+3. Certifique-se de que não há problemas com sua configuração executando as
+   verificações do instalador via
+   `curl -sS https://getcomposer.org/installer | php -- --check`.
 
-3. Make sure you have no problems with your setup by running the installer's
-   checks via `curl -sS https://getcomposer.org/installer | php -- --check`.
+4. Tente limpar o cache do Composer executando `composer clear-cache`.
 
-4. Try clearing Composer's cache by running `composer clear-cache`.
+5. Ao solucionar problemas, certifique-se de **instalar as dependências
+   diretamente a partir do seu `composer.json`** usando
+   `rm -rf vendor && composer update -v`; isso elimina possíveis interferências
+   de instalações existentes na pasta `vendor` ou de entradas no arquivo
+   `composer.lock`.
 
-5. Ensure you're **installing vendors straight from your `composer.json`** via
-   `rm -rf vendor && composer update -v` when troubleshooting, excluding any
-   possible interferences with existing vendor installations or `composer.lock`
-   entries.
+## Pacote não encontrado
 
+1. Verifique se **não há erros de digitação** no seu `composer.json` ou nos
+   nomes de branches e tags do repositório.
 
-## Package not found
+2. Certifique-se de definir a
+   **[minimum-stability](../04-schema.md#minimum-stability)** correta.
+   Para começar, ou para garantir que isso não seja um problema, defina
+   `minimum-stability` como "dev".
 
-1. Double-check you **don't have typos** in your `composer.json` or repository
-   branches and tag names.
+3. Pacotes que **não vêm do [Packagist](https://packagist.org/)** devem sempre
+   ser **definidos no pacote raiz** (o pacote que depende de todas as
+   dependências).
 
-2. Be sure to **set the right
-   [minimum-stability](../04-schema.md#minimum-stability)**. To get started or be
-   sure this is no issue, set `minimum-stability` to "dev".
-
-3. Packages **not coming from [Packagist](https://packagist.org/)** should
-   always be **defined in the root package** (the package depending on all
-   vendors).
-
-4. Use the **same vendor and package name** throughout all branches and tags of
-   your repository, especially when maintaining a third party fork and using
+4. Use o **mesmo nome de fornecedor e de pacote** em todas as branches e tags do
+   seu repositório, especialmente ao manter um fork de terceiros e utilizar o
    `replace`.
 
-5. If you are updating to a recently published version of a package, be aware that
-   Packagist has a delay of up to 1 minute before new packages are visible to Composer.
+5. Se você estiver atualizando para uma versão recém-publicada de um pacote,
+   lembre-se de que o Packagist pode levar até 1 minuto para tornar novos
+   pacotes visíveis ao Composer.
 
-6. If you are updating a single package, it may depend on newer versions itself.
-   In this case add the `--with-dependencies` argument **or** add all dependencies which
-   need an update to the command.
+6. Se você estiver atualizando um único pacote, ele próprio pode depender de
+   versões mais recentes.
+   Nesse caso, adicione o argumento `--with-dependencies` **ou** inclua no
+   comando todas as dependências que precisam ser atualizadas.
 
+## O pacote não está sendo atualizado para a versão esperada
 
-## Package is not updating to the expected version
+Tente executar `php composer.phar why-not [package-name] [expected-version]`.
 
-Try running `php composer.phar why-not [package-name] [expected-version]`.
+## Dependências no pacote raiz
 
+Quando o seu pacote raiz depende de um pacote que, por sua vez, depende (direta
+ou indiretamente) do próprio pacote raiz, podem ocorrer problemas em dois casos:
 
-## Dependencies on the root package
+1. Durante o desenvolvimento, se você estiver em um branch como `dev-main` e ele
+   não tiver um [branch-alias](aliases.md#alias-de-branch) definido, e a
+   dependência no pacote raiz exigir a versão `^2.0`, por exemplo, a versão
+   `dev-main` não atenderá a esse requisito.
+   A melhor solução aqui é garantir que você defina um alias de branch.
 
-When your root package depends on a package which ends up depending (directly or
-indirectly) back on the root package itself, issues can occur in two cases:
+2. Em execuções de CI (Integração Contínua), o problema pode ser que o Composer
+   não consiga detectar corretamente a versão do pacote raiz.
+   Se for um clone do git, geralmente funciona bem e o Composer detecta a versão
+   do branch atual; no entanto, alguns sistemas de CI realizam clones
+   superficiais, o que pode fazer com que o processo falhe ao testar pull
+   requests e feature branches.
+   Nesses casos, o alias do branch pode não ser reconhecido.
+   A melhor solução é definir a versão em que você está por meio de uma variável
+   de ambiente chamada `COMPOSER_ROOT_VERSION`.
+   Você pode defini-la como `dev-main`, por exemplo, para definir a versão do
+   pacote raiz como `dev-main`.
+   Use, por exemplo: `COMPOSER_ROOT_VERSION=dev-main composer install` para
+   exportar a variável apenas para a chamada do composer, ou defina-a
+   globalmente nas variáveis de ambiente do CI.
 
-1. During development, if you are on a branch like `dev-main` and the branch has no
-   [branch-alias](../articles/aliases.md#branch-alias) defined, and the dependency on the root package
-   requires version `^2.0` for example, the `dev-main` version will not satisfy it.
-   The best solution here is to make sure you first define a branch alias.
+## Detecção da versão do pacote raiz
 
-2. In CI (Continuous Integration) runs, the problem might be that Composer is not able
-   to detect the version of the root package properly. If it is a git clone it is
-   generally alright and Composer will detect the version of the current branch,
-   but some CIs do shallow clones so that process can fail when testing pull requests
-   and feature branches. In these cases the branch alias may then not be recognized.
-   The best solution is to define the version you are on via an environment variable
-   called `COMPOSER_ROOT_VERSION`. You set it to `dev-main` for example to define
-   the root package's version as `dev-main`.
-   Use for example: `COMPOSER_ROOT_VERSION=dev-main composer install` to export
-   the variable only for the call to composer, or you can define it globally in the
-   CI env vars.
+O Composer precisa saber a versão do pacote raiz para resolver dependências de
+forma eficaz.
+A versão do pacote raiz é determinada usando uma abordagem hierárquica:
 
-## Root package version detection
+1. **Campo `version` no `composer.json`**: primeiramente, o Composer procura por
+   um campo `version` no arquivo `composer.json` da raiz do projeto.
+   Se estiver presente, esse campo especifica diretamente a versão do pacote
+   raiz.
+   Isso geralmente não é recomendado, pois exige atualização constante, mas é
+   uma opção.
 
-Composer relies on knowing the version of the root package to resolve
-dependencies effectively. The version of the root package is determined
-using a hierarchical approach:
+2. **Variável de ambiente**: em seguida, o Composer verifica a variável de
+   ambiente `COMPOSER_ROOT_VERSION`.
+   Essa variável pode ser definida explicitamente pela pessoa usuária para
+   determinar a versão do pacote raiz, oferecendo uma maneira direta de informar
+   ao Composer a versão exata, especialmente em ambientes de CI/CD ou quando o
+   método VCS não é aplicável.
 
-1. **composer.json Version Field**: Firstly, Composer looks for a `version`
-   field in the project's root `composer.json` file. If present, this field
-   specifies the version of the root package directly. This is generally not
-   recommended as it needs to be constantly updated, but it is an option.
+3. **Inspeção do Sistema de Controle de Versão (VCS)**: o Composer tenta então
+   deduzir a versão interagindo com o sistema de controle de versão do projeto.
+   Por exemplo, em projetos versionados com Git, o Composer executa comandos
+   específicos do Git para deduzir a versão atual do projeto com base em tags,
+   branches e histórico de commits.
+   Se o diretório `.git` estiver ausente ou o histórico estiver incompleto, por
+   exemplo, se o CI estiver usando um clone superficial, essa detecção pode
+   falhar em encontrar a versão correta.
 
-2. **Environment Variable**: Composer then checks for the `COMPOSER_ROOT_VERSION`
-   environment variable. This variable can be explicitly set by the user to
-   define the version of the root package, providing a straightforward way to
-   inform Composer of the exact version, especially in CI/CD environments or
-   when the VCS method is not applicable.
+4. **Alternativa padrão**: se tudo mais falhar, o Composer usa `1.0.0` como
+   versão padrão.
 
-3. **Version Control System (VCS) Inspection**: Composer then attempts to guess
-   the version by interfacing with the version control system of the project. For
-   instance, in projects versioned with Git, Composer executes specific Git
-   commands to deduce the project's current version based on tags, branches, and
-   commit history. If a `.git` directory is missing or the history is incomplete
-   because CI is using a shallow clone for example, this detection may fail to find
-   the correct version.
+Observe que depender da versão/alternativa padrão pode levar a problemas de
+resolução de dependências, especialmente quando o pacote raiz depende de um
+pacote que, por sua vez, depende (direta ou indiretamente)
+[do próprio pacote raiz](#dependências-no-pacote-raiz).
 
-4. **Fallback**: If all else fails, Composer uses `1.0.0` as default version.
+## Problemas de tempo limite de rede, erro do cURL
 
-Note that relying on the default/fallback version might potentially lead to dependency
-resolution issues, especially when the root package depends on a package which ends up
-depending (directly or indirectly)
-[back on the root package itself](#dependencies-on-the-root-package).
-
-## Network timeout issues, curl error
-
-If you see something along the lines of:
+Se você encontrar uma mensagem semelhante a esta:
 
 ```
 Failed to download * curl error 28 while downloading * Operation timed out after 300000 milliseconds
 ```
 
-It means your network is probably so slow that a request took over 300seconds to complete. This is the
-minimum timeout Composer will use, but you can increase it by increasing the `default_socket_timeout`
-value in your php.ini to something higher.
+Significa que sua rede provavelmente está tão lenta que uma requisição levou
+mais de 300 segundos para ser concluída.
+Esse é o tempo limite mínimo que o Composer utiliza, mas você pode aumentá-lo
+alterando o valor de `default_socket_timeout` no seu `php.ini` para um valor
+mais alto.
 
+## Pacote não encontrado em uma construção do Jenkins
 
-## Package not found in a Jenkins-build
+1. Consulte o item ["Pacote não encontrado"](#pacote-não-encontrado) acima.
 
-1. Check the ["Package not found"](#package-not-found) item above.
+2. A operação de `git-clone` ou `checkout` no Jenkins deixa o branch em um
+   estado de "detached HEAD" (HEAD desanexado).
+   Como resultado, o Composer pode não conseguir identificar a versão do branch
+   que está sendo utilizada e pode não conseguir resolver uma
+   [dependência do pacote raiz](#dependências-no-pacote-raiz).
+   Para resolver esse problema, você pode utilizar a opção "Additional
+   Behaviours" (Comportamentos adicionais) -> "Check out to specific local
+   branch" (Fazer checkout em um branch local específico) nas configurações do
+   Git da sua tarefa no Jenkins, definindo o branch local como o memso branch
+   que você está selecionando no checkout.
+   Dessa forma, o checkout não ficará mais em estado desanexado e a dependência
+   do pacote raiz deverá ser satisfeita.
 
-2. The git-clone / checkout within Jenkins leaves the branch in a "detached HEAD"-state. As
-   a result, Composer may not able to identify the version of the current checked out branch
-   and may not be able to resolve a [dependency on the root package](#dependencies-on-the-root-package).
-   To solve this problem, you can use the "Additional Behaviours" -> "Check out to specific local
-   branch" in your Git-settings for your Jenkins-job, where your "local branch" shall be the same
-   branch as you are checking out. Using this, the checkout will not be in detached state any more
-   and the dependency on the root package should become satisfied.
+## Tenho uma dependência que contém uma definição de "repositories" no seu `composer.json`, mas ela parece estar sendo ignorada.
 
+A propriedade de configuração [`repositories`](../04-schema.md#repositories) é
+definida como [root-only](../04-schema.md#pacote-raiz).
+Ela não é herdada.
+Você pode ler mais sobre os motivos disso no artigo
+"[Por que o Composer não consegue carregar repositórios recursivamente?](../faqs/why-cant-composer-load-repositories-recursively.md)".
+A solução alternativa mais simples para essa limitação é mover ou duplicar a
+definição de `repositories` para o seu arquivo `composer.json` raiz.
 
-## I have a dependency which contains a "repositories" definition in its composer.json, but it seems to be ignored.
+## Fixei uma dependência em um commit específico, mas estou obtendo resultados inesperados.
 
-The [`repositories`](../04-schema.md#repositories) configuration property is defined as [root-only](../04-schema.md#root-package). It is not inherited. You can read more about the reasons behind this in the "[why can't
-Composer load repositories recursively?](../faqs/why-cant-composer-load-repositories-recursively.md)" article.
-The simplest work-around to this limitation, is moving or duplicating the `repositories` definition into your root
-composer.json.
+Embora o Composer ofereça suporte à fixação de dependências em um commit
+específico usando a sintaxe `#commit-ref`, existem algumas ressalvas que devem
+ser levadas em consideração.
+A mais importante está [documentada](../04-schema.md#links-de-pacotes), mas é
+frequentemente ignorada:
 
+> **Nota:** Embora isso seja conveniente às vezes, não é como você deve utilizar
+> pacotes a longo prazo, pois envolve uma limitação técnica.
+> Os metadados do `composer.json` ainda serão lidos a partir do nome da branch
+> que você especificar antes do hash.
+> Por isso, em alguns casos, essa não será uma solução prática, e você deve
+> sempre tentar migrar para versões com tag assim que possível.
 
-## I have locked a dependency to a specific commit but get unexpected results.
+Não existe uma solução alternativa simples para essa limitação.
+Portanto, recomenda-se fortemente que você não a utilize.
 
-While Composer supports locking dependencies to a specific commit using the `#commit-ref` syntax, there are certain
-caveats that one should take into account. The most important one is [documented](../04-schema.md#package-links), but
-frequently overlooked:
+## Precisa substituir a versão de um pacote?
 
-> **Note:** While this is convenient at times, it should not be how you use
-> packages in the long term because it comes with a technical limitation. The
-> composer.json metadata will still be read from the branch name you specify
-> before the hash. Because of that in some cases it will not be a practical
-> workaround, and you should always try to switch to tagged releases as soon
-> as you can.
+Digamos que seu projeto dependa do pacote A, que por sua vez depende de uma
+versão específica do pacote B (por exemplo, 0.1).
+Mas você precisa de uma versão diferente desse pacote B (por exemplo, 0.11).
 
-There is no simple work-around to this limitation. It is therefore strongly recommended that you do not use it.
+Você pode resolver isso criando um alias da versão 0.11 para a 0.1:
 
-
-## Need to override a package version
-
-Let's say your project depends on package A, which in turn depends on a specific
-version of package B (say 0.1). But you need a different version of said package B (say 0.11).
-
-You can fix this by aliasing version 0.11 to 0.1:
-
-composer.json:
+`composer.json`:
 
 ```json
 {
@@ -185,94 +211,135 @@ composer.json:
 }
 ```
 
-See [aliases](../articles/aliases.md) for more information.
+Consulte [aliases](aliases.md) para mais informações.
 
+## Identificando a origem de um valor de configuração
 
-## Figuring out where a config value came from
+Use `php composer.phar config --list --source` para ver a origem de cada valor
+de configuração.
 
-Use `php composer.phar config --list --source` to see where each config value originated from.
+## Erros de limite de memória
 
-## Memory limit errors
+A primeira providência é garantir que você esteja utilizando o Composer 2 e, se
+possível, a versão 2.2.0 ou superior.
 
-The first thing to do is to make sure you are running Composer 2, and if possible 2.2.0 or above.
+O Composer 1 consumia muito mais memória; atualizar para a versão mais recente
+proporcionará resultados muito melhores e mais rápidos.
 
-Composer 1 used much more memory and upgrading to the latest version will give you much better and faster results.
-
-Composer may sometimes fail on some commands with this message:
+Às vezes, o Composer pode falhar na execução de alguns comandos, exibindo a
+seguinte mensagem:
 
 `PHP Fatal error:  Allowed memory size of XXXXXX bytes exhausted <...>`
 
-In this case, the PHP `memory_limit` should be increased.
+Nesse caso, é necessário aumentar o `memory_limit` do PHP.
 
-> **Note:** Composer internally increases the `memory_limit` to `1.5G`.
+> **Nota:** O Composer aumenta internamente o `memory_limit` para `1.5G`.
 
-To get the current `memory_limit` value, run:
+Para obter o valor atual do `memory_limit`, execute:
 
 ```shell
 php -r "echo ini_get('memory_limit').PHP_EOL;"
 ```
 
-Try increasing the limit in your `php.ini` file (ex. `/etc/php5/cli/php.ini` for
-Debian-like systems):
+Tente aumentar o limite no seu arquivo `php.ini` (por exemplo,
+`/etc/php5/cli/php.ini` para sistemas baseados em Debian):
 
 ```ini
 ; Use -1 for unlimited or define an explicit value like 2G
 memory_limit = -1
 ```
 
-Composer also respects a memory limit defined by the `COMPOSER_MEMORY_LIMIT` environment variable:
+O Composer também respeita um limite de memória definido pela variável de
+ambiente `COMPOSER_MEMORY_LIMIT`:
 
 ```shell
 COMPOSER_MEMORY_LIMIT=-1 composer.phar <...>
 ```
 
-Or, you can increase the limit with a command-line argument:
+Ou você pode aumentar o limite com um argumento de linha de comando:
 
 ```shell
 php -d memory_limit=-1 composer.phar <...>
 ```
 
-However, please note that setting the memory limit using these methods primarily addresses memory issues within Composer itself and its immediate processes. Child processes or external commands invoked by Composer may still require separate adjustments if they have their own memory requirements.
+No entanto, observe que definir o limite de memória usando esses métodos resolve
+principalmente problemas de memória no próprio Composer e em seus processos
+imediatos.
+Processos filhos ou comandos externos invocados pelo Composer ainda podem exigir
+ajustes separados, caso possuam seus próprios requisitos de memória.
 
-This issue can also happen on cPanel instances, when the shell fork bomb protection is activated. For more information, see the [documentation](https://documentation.cpanel.net/display/68Docs/Shell+Fork+Bomb+Protection) of the fork bomb feature on the cPanel site.
+Esse problema também pode ocorrer em instâncias do cPanel quando a proteção
+contra fork bomb no shell está habilitada.
+Para mais informações, consulte a
+[documentação](https://documentation.cpanel.net/display/68Docs/Shell+Fork+Bomb+Protection)
+sobre o recurso de proteção contra fork bomb no site do cPanel.
 
-## Xdebug impact on Composer
+## Impacto do Xdebug no Composer
 
-To improve performance when the Xdebug extension is enabled, Composer automatically restarts PHP without it.
-You can override this behavior by using an environment variable: `COMPOSER_ALLOW_XDEBUG=1`.
+Para melhorar o desempenho quando a extensão Xdebug está habilitada, o Composer
+reinicia automaticamente o PHP sem ela.
+Você pode substituir esse comportamento usando uma variável de ambiente:
+`COMPOSER_ALLOW_XDEBUG=1`.
 
-Composer will always show a warning if Xdebug is being used, but you can override this with an environment variable:
-`COMPOSER_DISABLE_XDEBUG_WARN=1`. If you see this warning unexpectedly, then the restart process has failed:
-please report this [issue](https://github.com/composer/composer/issues).
+O Composer sempre exibirá um aviso se o Xdebug estiver sendo usado, mas você
+pode desativar esse aviso com uma variável de ambiente:
+`COMPOSER_DISABLE_XDEBUG_WARN=1`.
+Se você vir esse aviso inesperadamente, significa que o processo de
+reinicialização falhou: por favor, relate esse
+[problema](https://github.com/composer/composer/issues).
 
+## "O sistema não pode encontrar o caminho especificado" (Windows)
 
-## "The system cannot find the path specified" (Windows)
+1. Abra o regedit.
+2. Procure por uma chave `AutoRun` em
+   `HKEY_LOCAL_MACHINE\Software\Microsoft\Command Processor`,
+   `HKEY_CURRENT_USER\Software\Microsoft\Command Processor` ou
+   `HKEY_LOCAL_MACHINE\Software\Wow6432Node\Microsoft\Command Processor`.
+3. Verifique se ela contém algum caminho para um arquivo inexistente; se for o
+   caso, remova-o.
 
-1. Open regedit.
-2. Search for an `AutoRun` key inside `HKEY_LOCAL_MACHINE\Software\Microsoft\Command Processor`,
-   `HKEY_CURRENT_USER\Software\Microsoft\Command Processor`
-   or `HKEY_LOCAL_MACHINE\Software\Wow6432Node\Microsoft\Command Processor`.
-3. Check if it contains any path to a non-existent file, if it's the case, remove them.
+## Problema com certificado SSL: não foi possível obter o certificado do emissor local
 
+1. Verifique se o seu repositório de certificados raiz (ou pacote de CA) está
+   atualizado.
+   Execute `composer diagnose -vvv` e procure pelas linhas `Checked CA file ...`
+   ou `Checked directory ...` no início da saída do comando.
+   Isso mostrará onde o Composer está procurando pelo pacote de CA.
+   Você pode obter um
+   [novo arquivo cacert.pem no site do cURL](https://curl.se/docs/caextract.html)
+   e salvá-lo nesse local.
+2. Se isso não resolver o problema, mesmo que o Composer encontre um pacote de
+   CA válido, tente desativar seu antivírus e o firewall para verificar se isso
+   ajuda.
+   Já observamos casos em que o Avast no Windows, por exemplo, impediu o
+   funcionamento correto do Composer.
+   Para desativar a verificação de HTTPS no Avast, vá em "Proteção > Módulos
+   principais > Módulo Web > **desmarque** a opção Ativar verificação de HTTPS".
+   Se isso resolver, você deve relatar o problema ao fabricante do software para
+   que eles possam, quem sabe, fazer melhorias.
 
-## API rate limit and OAuth tokens
+## Limite de taxa da API e tokens OAuth
 
-Because of GitHub's rate limits on their API it can happen that Composer prompts
-for authentication asking your username and password so it can go ahead with its work.
+Devido aos limites de taxa da API do GitHub, pode acontecer de o Composer
+solicitar autenticação, pedindo seu nome de usuário e senha, para prosseguir com
+a execução.
 
-If you would prefer not to provide your GitHub credentials to Composer you can
-manually create a token using the [procedure documented here](../articles/authentication-for-private-packages.md#github-oauth).
+Caso prefira não fornecer suas credenciais do GitHub ao Composer, você pode
+criar um token manualmente seguindo o
+[procedimento documentado aqui](authentication-for-private-packages.md#github-oauth).
 
-Now Composer should install/update without asking for authentication.
+Agora, o Composer deverá realizar a instalação ou atualização sem solicitar
+autenticação.
 
+## Erros `proc_open(): fork failed`
 
-## proc_open(): fork failed errors
-
-If Composer shows proc_open() fork failed on some commands:
+Se o Composer apresentar o erro `proc_open(): fork failed` ao executar alguns
+comandos:
 
 `PHP Fatal error: Uncaught exception 'ErrorException' with message 'proc_open(): fork failed - Cannot allocate memory' in phar`
 
-This could be happening because the VPS runs out of memory and has no Swap space enabled.
+Isso pode estar ocorrendo porque a VPS ficou sem memória e não possui espaço de
+swap habilitado.
 
 ```shell
 free -m
@@ -284,7 +351,7 @@ Mem: 2048 357 1690 0 0 237
 Swap: 0 0 0
 ```
 
-To enable the swap you can use for example:
+Para habilitar o swap, você pode usar, por exemplo:
 
 ```shell
 /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
@@ -292,146 +359,164 @@ To enable the swap you can use for example:
 /bin/chmod 0600 /var/swap.1
 /sbin/swapon /var/swap.1
 ```
-You can make a permanent swap file following this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04).
 
+Você pode criar um arquivo de swap permanente seguindo este
+[tutorial](https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04).
 
-## proc_open(): failed to open stream errors (Windows)
+## Erros `proc_open(): failed to open stream` (Windows)
 
-If Composer shows proc_open(NUL) errors on Windows:
+Se o Composer apresentar erros `proc_open(NUL)` no Windows:
 
 `proc_open(NUL): failed to open stream: No such file or directory`
 
-This could be happening because you are working in a _OneDrive_ directory and
-using a version of PHP that does not support the file system semantics of this
-service. The issue was fixed in PHP 7.2.23 and 7.3.10.
+Isso pode estar acontecendo porque você está trabalhando em um diretório do
+_OneDrive_ e utilizando uma versão do PHP que não oferece suporte à semântica do
+sistema de arquivos desse serviço.
+O problema foi corrigido nas versões 7.2.23 e 7.3.10 do PHP.
 
-Alternatively it could be because the Windows Null Service is not enabled. For
-more information, see this [issue](https://github.com/composer/composer/issues/7186#issuecomment-373134916).
+Alternativamente, o problema pode ocorrer porque o serviço Null do Windows não
+está habilitado.
+Para mais informações, consulte esta
+[issue](https://github.com/composer/composer/issues/7186#issuecomment-373134916).
 
+## Modo de operação reduzida
 
-## Degraded Mode
+Devido a alguns problemas intermitentes no Travis e em outros sistemas,
+introduzimos um modo de rede de operação reduzida que ajuda o Composer a
+concluir a execução com sucesso, embora desabilite algumas otimizações.
+Esse modo é ativado automaticamente assim que um problema é detectado.
+Se você encontrar esse problema esporadicamente, provavelmente não precisa se
+preocupar (uma rede lenta ou sobrecarregada também pode causar esses timeouts;
+no entanto, se ele ocorrer repetidamente, convém verificar as opções abaixo para
+identificar e resolver a situação.
 
-Due to some intermittent issues on Travis and other systems, we introduced a
-degraded network mode which helps Composer finish successfully but disables
-a few optimizations. This is enabled automatically when an issue is first
-detected. If you see this issue sporadically you probably don't have to worry
-(a slow or overloaded network can also cause those time outs), but if it
-appears repeatedly you might want to look at the options below to identify
-and resolve it.
+Se você foi direcionado a esta página, verifique os seguintes pontos:
 
-If you have been pointed to this page, you want to check a few things:
+- Se estiver usando o antivírus ESET, vá em "Configurações Avançadas" e
+  desabilite o "Scanner HTTP" na seção "Proteção de acesso à web".
+- Se estiver usando IPv6, tente desativá-lo.
+  Se isso resolver seus problemas, entre em contato com seu provedor de internet
+  ou com a empresa de hospedagem do servidor; o problema não está no Packagist,
+  mas nas regras de roteamento entre você e o Packagist (ou seja, na
+  infraestrutura geral da internet).
+  A melhor maneira de solucionar isso é alertar as pessoas engenheiras de rede
+  que têm autonomia para corrigir o problema.
+  Consulte a próxima seção para ver soluções alternativas para IPv6.
+- Se nenhuma das opções acima ajudar, por favor, relate o erro.
 
-- If you are using ESET antivirus, go in "Advanced Settings" and disable "HTTP-scanner"
-  under "web access protection"
-- If you are using IPv6, try disabling it. If that solves your issues, get in touch
-  with your ISP or server host, the problem is not at the Packagist level but in the
-  routing rules between you and Packagist (i.e. the internet at large). The best way to get
-  these fixed is to raise awareness to the network engineers that have the power to fix it.
-  Take a look at the next section for IPv6 workarounds.
-- If none of the above helped, please report the error.
+## Tempo limite da operação excedido (problemas com IPv6)
 
-
-## Operation timed out (IPv6 issues)
-
-You may run into errors if IPv6 is not configured correctly. A common error is:
+Você pode encontrar erros se o IPv6 não estiver configurado corretamente.
+Um erro comum é:
 
 ```text
 The "https://getcomposer.org/version" file could not be downloaded: failed to
 open stream: Operation timed out
 ```
 
-We recommend you fix your IPv6 setup. If that is not possible, you can try the
-following workarounds:
+Recomendamos corrigir sua configuração de IPv6.
+Se isso não for possível, você pode tentar as seguintes soluções alternativas:
 
-**Generic Workaround:**
+**Solução alternativa genérica:**
 
-Set the [`COMPOSER_IPRESOLVE=4`](../03-cli.md#composer-ipresolve) environment variable which will force curl to resolve
-domains using IPv4. This only works when the curl extension is used for downloads.
+Defina a variável de ambiente
+[`COMPOSER_IPRESOLVE=4`](../03-cli.md#composer-ipresolve), o que forçará o curl
+a resolver domínios usando IPv4.
+Isso funciona apenas quando a extensão curl é utilizada para os downloads.
 
-**Workaround Linux:**
+**Solução alternativa para Linux:**
 
-On linux, it seems that running this command helps to make ipv4 traffic have a
-higher priority than ipv6, which is a better alternative than disabling ipv6 entirely:
+No Linux, parece que executar este comando ajuda a dar prioridade ao tráfego
+IPv4 sobre o IPv6, o que é uma alternativa melhor do que desativar o IPv6
+completamente:
 
 ```shell
 sudo sh -c "echo 'precedence ::ffff:0:0/96 100' >> /etc/gai.conf"
 ```
 
-**Workaround Windows:**
+**Solução alternativa para Windows:**
 
-On windows the only way is to disable ipv6 entirely I am afraid (either in windows or in your home router).
+No Windows, receio que a única maneira seja desativar o IPv6 completamente (seja
+no Windows ou no seu roteador doméstico).
 
-**Workaround Mac OS X:**
+**Solução alternativa para Mac OS X:**
 
-Get name of your network device:
+Obtenha o nome do seu dispositivo de rede:
 
 ```shell
 networksetup -listallnetworkservices
 ```
 
-Disable IPv6 on that device (in this case "Wi-Fi"):
+Desabilite o IPv6 nesse dispositivo (neste caso, "Wi-Fi"):
 
 ```shell
 networksetup -setv6off Wi-Fi
 ```
 
-Run Composer ...
+Execute o Composer...
 
-You can enable IPv6 again with:
+Você pode reabilitar o IPv6 com:
 
 ```shell
 networksetup -setv6automatic Wi-Fi
 ```
 
-That said, if this fixes your problem, please talk to your ISP about it to
-try to resolve the routing errors. That's the best way to get things resolved
-for everyone.
+Dito isso, se isso resolver o seu problema, por favor, entre em contato com seu
+provedor de internet para tentar solucionar os erros de roteamento.
+Essa é a melhor maneira de resolver a situação para todas as pessoas.
 
+## O Composer trava com o SSH ControlMaster
 
-## Composer hangs with SSH ControlMaster
+Ao tentar instalar pacotes de um repositório Git utilizando a configuração
+`ControlMaster`para sua conexão SSH, o Composer pode travar indefinidamente, e
+você verá um processo `sh` no estado `defunct` na sua lista de processos.
 
-When you try to install packages from a Git repository and you use the `ControlMaster`
-setting for your SSH connection, Composer might hang endlessly and you see a `sh`
-process in the `defunct` state in your process list.
+A causa disso é um bug no SSH:
+https://bugzilla.mindrot.org/show_bug.cgi?id=1988.
 
-The reason for this is a SSH Bug: https://bugzilla.mindrot.org/show_bug.cgi?id=1988
-
-As a workaround, open a SSH connection to your Git host before running Composer:
+Como solução alternativa, abra uma conexão SSH com o host do Git antes de
+executar o Composer:
 
 ```shell
 ssh -t git@mygitserver.tld
 php composer.phar update
 ```
 
-See also https://github.com/composer/composer/issues/4180 for more information.
+Consulte também https://github.com/composer/composer/issues/4180 para mais
+informações.
 
+## Arquivos ZIP não são descompactados corretamente.
 
-## Zip archives are not unpacked correctly.
+O Composer pode descompactar arquivos ZIP usando o utilitário `unzip` ou `7z`
+(7-Zip) do sistema, ou a classe nativa `ZipArchive` do PHP.
+Em sistemas operacionais onde arquivos ZIP podem conter permissões e links
+simbólicos, recomendamos instalar o `unzip` ou o `7z`, pois esses recursos não
+são suportados pela classe `ZipArchive`.
 
-Composer can unpack zipballs using either a system-provided `unzip` or `7z` (7-Zip) utility, or PHP's
-native `ZipArchive` class. On OSes where ZIP files can contain permissions and symlinks, we recommend
-installing `unzip` or `7z` as these features are not supported by `ZipArchive`.
+## Desativando o otimizador de pool
 
+No Composer, a classe `Pool` contém todos os pacotes relevantes para o processo
+de resolução de dependências.
+Ela é utilizada para gerar todas as regras que são, então, passadas para o
+resolvedor de dependências.
+Para melhorar o desempenho, o Composer tenta otimizar esse `Pool` removendo
+precocemente informações de pacotes que não são necessárias.
 
-## Disabling the pool optimizer
-
-In Composer, the `Pool` class contains all the packages that are relevant for the dependency
-resolving process. That is what is used to generate all the rules which are then
-passed on to the dependency solver.
-In order to improve performance, Composer tries to optimize this `Pool` by removing useless
-package information early on.
-
-If all goes well, you should never notice any issues with it but in case you run into
-an unexpected result such as an unresolvable set of dependencies or conflicts where you
-think Composer is wrong, you might want to disable the optimizer by using the environment
-variable `COMPOSER_POOL_OPTIMIZER` and run the update again like so:
+Se tudo correr bem, você não deverá notar problemas com isso; no entanto, caso
+se depare com um resultado inesperado, como um conjunto de dependências
+impossível de resolver ou conflitos nos quais você acredita que o Composer
+esteja errado, você pode desativar o otimizador usando a variável de ambiente
+`COMPOSER_POOL_OPTIMIZER` e executar a atualização novamente, desta forma:
 
 ```shell
 COMPOSER_POOL_OPTIMIZER=0 php composer.phar update
 ```
 
-Now double check if the result is still the same. It will take significantly longer and use
-a lot more memory to run the dependency resolving process.
+Agora, verifique se o resultado permanece o mesmo.
+O processo de resolução de dependências levará significativamente mais tempo e
+consumirá muito mais memória.
 
-If the result is different, you likely hit a problem in the pool optimizer.
-Please [report this issue](https://github.com/composer/composer/issues) so it can be fixed.
+Se o resultado for diferente, é provável que você tenha encontrado um problema
+no otimizador de pool.
+Por favor, [relate esse problema](https://github.com/composer/composer/issues)
+para que ele possa ser corrigido.
