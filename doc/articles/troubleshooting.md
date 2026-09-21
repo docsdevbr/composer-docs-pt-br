@@ -125,12 +125,12 @@ A versão do pacote raiz é determinada usando uma abordagem hierárquica:
    exemplo, se o CI estiver usando um clone superficial, essa detecção pode
    falhar em encontrar a versão correta.
 
-4. **Alternativa padrão**: se tudo mais falhar, o Composer usa `1.0.0` como
-   versão padrão.
+4. **Alternativa de contingência**: se tudo mais falhar, o Composer usa `1.0.0`
+   como versão padrão.
 
-Observe que depender da versão/alternativa padrão pode levar a problemas de
-resolução de dependências, especialmente quando o pacote raiz depende de um
-pacote que, por sua vez, depende (direta ou indiretamente)
+Observe que depender da versão/alternativa de contingência pode levar a
+problemas de resolução de dependências, especialmente quando o pacote raiz
+depende de um pacote que, por sua vez, depende (direta ou indiretamente)
 [do próprio pacote raiz](#dependências-no-pacote-raiz).
 
 ## Problemas de tempo limite de rede, erro do cURL

@@ -6,25 +6,30 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: Expose command-line scripts from packages
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/vendor-binaries.md
+source_revision: 1c6ba6af4746d425213568e367af686b60df05b3
+translation_status: ready
+
+tagline: Exponha scripts de linha de comando de pacotes
 ---
 
-# Vendor binaries and the `vendor/bin` directory
+# Binários de fornecedor e o diretório `vendor/bin`
 
-## What is a vendor binary?
+## O que é um binário de fornecedor?
 
-Any command line script that a Composer package would like to pass along
-to a user who installs the package should be listed as a vendor binary.
+Qualquer script de linha de comando que um pacote do Composer deseje
+disponibilizar à pessoa usuária que instalar o pacote deve ser listado como um
+binário de fornecedor.
 
-If a package contains other scripts that are not needed by the package
-users (like build or compile scripts) that code should not be listed
-as a vendor binary.
+Se um pacote contiver outros scripts que não sejam necessários às pessoas
+usuárias do pacote (como scripts de construção ou compilação), esse código não
+deve ser listado como um binário de fornecedor.
 
-## How is it defined?
+## Como ele é definido?
 
-It is defined by adding the `bin` key to a project's `composer.json`.
-It is specified as an array of files so multiple binaries can be added
-for any given project.
+Ele é definido adicionando a chave `bin` ao arquivo `composer.json` do projeto.
+É especificado como um array de arquivos, permitindo adicionar múltiplos
+binários a um determinado projeto.
 
 ```json
 {
@@ -32,25 +37,25 @@ for any given project.
 }
 ```
 
-## What does defining a vendor binary in composer.json do?
+## O que definir um binário de fornecedor no `composer.json` faz?
 
-It instructs Composer to install the package's binaries to `vendor/bin`
-for any project that **depends** on that project.
+Ela instrui o Composer a instalar os binários do pacote em `vendor/bin` para
+qualquer projeto que **dependa** desse projeto.
 
-This is a convenient way to expose useful scripts that would
-otherwise be hidden deep in the `vendor/` directory.
+Essa é uma maneira conveniente de disponibilizar scripts úteis que, de outra
+forma, ficariam ocultos nas profundezas do diretório `vendor/`.
 
-## What happens when Composer is run on a composer.json that defines vendor binaries?
+## O que acontece quando o Composer é executado em um `composer.json` que define binários de fornecedor?
 
-For the binaries that a package defines directly, nothing happens.
+Para os binários que um pacote define diretamente, nada acontece.
 
-## What happens when Composer is run on a composer.json that has dependencies with vendor binaries listed?
+## O que acontece quando o Composer é executado em um `composer.json` que possui dependências com binários de fornecedor listados?
 
-Composer looks for the binaries defined in all of the dependencies. A
-proxy file (or two on Windows/WSL) is created from each dependency's
-binaries to `vendor/bin`.
+O Composer busca os binários definidos em todas as dependências.
+Um arquivo proxy (ou dois, no Windows/WSL) é criado em `vendor/bin` para os
+binários de cada dependência.
 
-Say package `my-vendor/project-a` has binaries setup like this:
+Suponha que o pacote `my-vendor/project-a` tenha binários configurados assim:
 
 ```json
 {
@@ -59,10 +64,11 @@ Say package `my-vendor/project-a` has binaries setup like this:
 }
 ```
 
-Running `composer install` for this `composer.json` will not do
-anything with `bin/project-a-bin`.
+Executar `composer install` para este `composer.json` não fará nada com
+`bin/project-a-bin`.
 
-Say project `my-vendor/project-b` has requirements setup like this:
+Suponha que o projeto `my-vendor/project-b` tenha as dependências configuradas
+desta forma:
 
 ```json
 {
@@ -73,22 +79,23 @@ Say project `my-vendor/project-b` has requirements setup like this:
 }
 ```
 
-Running `composer install` for this `composer.json` will look at
-all of project-a's binaries and install them to `vendor/bin`.
+Ao executar `composer install` para este `composer.json`, o Composer analisará
+todos os binários do `project-a` e os instalará em `vendor/bin`.
 
-In this case, Composer will make `vendor/my-vendor/project-a/bin/project-a-bin`
-available as `vendor/bin/project-a-bin`.
+Nesse caso, o Composer disponibilizará
+`vendor/my-vendor/project-a/bin/project-a-bin` como `vendor/bin/project-a-bin`.
 
-## Finding the Composer autoloader from a binary
+## Localizando o autoloader do Composer a partir de um binário
 
-As of Composer 2.2, a new `$_composer_autoload_path` global variable
-is defined by the bin proxy file, so that when your binary gets executed
-it can use it to easily locate the project's autoloader.
+A partir do Composer 2.2, uma nova variável global `$_composer_autoload_path`
+é definida pelo arquivo proxy do binário; assim, quando o binário for executado,
+ele poderá utilizá-la para localizar facilmente o autoloader do projeto.
 
-This global will not be available however when running binaries defined
-by the root package itself, so you need to have a fallback in place.
+No entanto, essa variável global não estará disponível ao executar binários
+definidos pelo próprio pacote raiz; portanto, é necessário implementar uma
+alternativa de contingência.
 
-This can look like this for example:
+Um exemplo de como isso pode ser feito é:
 
 ```php
 <?php
@@ -96,23 +103,25 @@ This can look like this for example:
 include $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
 ```
 
-If you want to rely on this in your package you should however make sure to
-also require `"composer-runtime-api": "^2.2"` to ensure that the package
-gets installed with a Composer version supporting the feature.
+Se você quiser depender disso em seu pacote, no entanto, certifique-se de também
+exigir `"composer-runtime-api": "^2.2"` para garantir que o pacote seja
+instalado com uma versão do Composer que suporte esse recurso.
 
-## Finding the Composer bin-dir from a binary
+## Localizando o diretório `bin-dir` do Composer a partir de um binário
 
-As of Composer 2.2.2, a new `$_composer_bin_dir` global variable
-is defined by the bin proxy file, so that when your binary gets executed
-it can use it to easily locate the project's Composer bin directory.
+A partir do Composer 2.2.2, uma nova variável global `$_composer_bin_dir` é
+definida pelo arquivo proxy de binários; assim, quando seu binário for
+executado, ele poderá utilizá-la para localizar facilmente o diretório de
+binários do Composer no projeto.
 
-For non-PHP binaries, as of Composer 2.2.6, the bin proxy sets a
-`COMPOSER_RUNTIME_BIN_DIR` environment variable.
+Para binários que não são PHP, a partir do Composer 2.2.6, o proxy de binários
+define uma variável de ambiente chamada `COMPOSER_RUNTIME_BIN_DIR`.
 
-This global variable will not be available however when running binaries defined
-by the root package itself, so you need to have a fallback in place.
+No entanto, essa variável global não estará disponível ao executar binários
+definidos pelo próprio pacote raiz; portanto, é necessário implementar uma
+alternativa de contingência.
 
-This can look like this for example:
+Um exemplo de como fazer isso seria:
 
 ```php
 <?php
@@ -130,32 +139,34 @@ else
 fi
 ```
 
-If you want to rely on this in your package you should however make sure to
-also require `"composer-runtime-api": "^2.2.2"` to ensure that the package
-gets installed with a Composer version supporting the feature.
+Se você quiser depender disso em seu pacote, no entanto, certifique-se de também
+exigir `"composer-runtime-api": "^2.2.2"` para garantir que o pacote seja
+instalado com uma versão do Composer que suporte esse recurso.
 
-## What about Windows and .bat files?
+## E quanto ao Windows e arquivos .bat?
 
-Packages managed entirely by Composer do not *need* to contain any
-`.bat` files for Windows compatibility. Composer handles installation
-of binaries in a special way when run in a Windows environment:
+Pacotes gerenciados inteiramente pelo Composer não *precisam* conter arquivos
+`.bat` para compatibilidade com o Windows.
+O Composer lida com a instalação de binários de uma maneira especial quando
+executado em um ambiente Windows:
 
- * A `.bat` file is generated automatically to reference the binary
- * A Unix-style proxy file with the same name as the binary is also
-   generated, which is useful for WSL, Linux VMs, etc.
+* Um arquivo `.bat` é gerado automaticamente para referenciar o binário.
+* Um arquivo proxy no estilo Unix com o mesmo nome do binário também é gerado, o
+  que é útil para WSL, VMs Linux, etc.
 
-Packages that need to support workflows that may not include Composer
-are welcome to maintain custom `.bat` files. In this case, the package
-should **not** list the `.bat` file as a binary as it is not needed.
+Pacotes que precisam oferecer suporte a fluxos de trabalho que podem não incluir
+o Composer podem manter arquivos `.bat` personalizados.
+Nesse caso, o pacote **não** deve listar o arquivo `.bat` como um binário, pois
+isso não é necessário.
 
-## Can vendor binaries be installed somewhere other than vendor/bin?
+## Binários do fornecedor podem ser instalados em outro local que não seja `vendor/bin`?
 
-Yes, there are two ways an alternate vendor binary location can be specified:
+Sim, existem duas maneiras de especificar um local alternativo para binários do vendor:
 
- 1. Setting the `bin-dir` configuration setting in `composer.json`
- 1. Setting the environment variable `COMPOSER_BIN_DIR`
+1. Definindo a configuração `bin-dir` no `composer.json`.
+1. Definindo a variável de ambiente `COMPOSER_BIN_DIR`.
 
-An example of the former looks like this:
+Um exemplo da primeira opção é assim:
 
 ```json
 {
@@ -165,8 +176,8 @@ An example of the former looks like this:
 }
 ```
 
-Running `composer install` for this `composer.json` will result in
-all of the vendor binaries being installed in `scripts/` instead of
-`vendor/bin/`.
+Executar `composer install` para este `composer.json` fará com que todos os
+binários de dependências sejam instalados em `scripts/` em vez de `vendor/bin/`.
 
-You can set `bin-dir` to `./` to put binaries in your project root.
+Você pode definir `bin-dir` como `./` para colocar os binários na raiz do seu
+projeto.

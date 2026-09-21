@@ -45,7 +45,7 @@ Isto faz do campo `config` um campo `root-only`.
 ### name
 
 O nome do pacote.
-Consiste no nome do vendor e no nome do projeto, separados por `/`.
+Consiste no nome do fornecedor e no nome do projeto, separados por `/`.
 Exemplos:
 
 * monolog/monolog

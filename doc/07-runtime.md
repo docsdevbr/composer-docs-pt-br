@@ -196,7 +196,7 @@ A `composer-runtime-api` `2.2` introduziu uma nova variável global
 `$_composer_autoload_path`, definida ao executar binários instalados com o
 Composer.
 Leia mais sobre isso
-[na documentação de binários de vendor](articles/vendor-binaries.md#finding-the-composer-autoloader-from-a-binary).
+[na documentação de binários de fornecedor](articles/vendor-binaries.md#localizando-o-autoloader-do-composer-a-partir-de-um-binário).
 
 Ela é definida pelo proxy do binário e, portanto, não é disponibilizada aos
 projetos pelo arquivo `vendor/autoload.php` do Composer, o que seria inútil,
@@ -207,7 +207,7 @@ pois apontaria de volta para si mesma.
 A `composer-runtime-api` `2.2.2` introduziu uma nova variável global
 `$_composer_bin_dir`, definida ao executar binários instalados com o Composer.
 Leia mais sobre isso
-[na documentação de binários de vendor](articles/vendor-binaries.md#finding-the-composer-bin-dir-from-a-binary).
+[na documentação de binários de fornecedor](articles/vendor-binaries.md#localizando-o-diretório-bin-dir-do-composer-a-partir-de-um-binário).
 
 Isso é definido pelo proxy de binário e, portanto, não é disponibilizado aos
 projetos pelo arquivo `vendor/autoload.php` do Composer.
