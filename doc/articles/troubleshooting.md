@@ -53,7 +53,7 @@ Esta é uma lista de problemas comuns ao usar o Composer e como evitá-los.
    ser **definidos no pacote raiz** (o pacote que depende de todas as
    dependências).
 
-4. Use o **mesmo nome de fornecedor e de pacote** em todas as branches e tags do
+4. Use o **mesmo nome de fornecedor e de pacote** em todos os branches e tags do
    seu repositório, especialmente ao manter um fork de terceiros e utilizar o
    `replace`.
 
@@ -184,7 +184,7 @@ frequentemente ignorada:
 
 > **Nota:** Embora isso seja conveniente às vezes, não é como você deve utilizar
 > pacotes a longo prazo, pois envolve uma limitação técnica.
-> Os metadados do `composer.json` ainda serão lidos a partir do nome da branch
+> Os metadados do `composer.json` ainda serão lidos a partir do nome do branch
 > que você especificar antes do hash.
 > Por isso, em alguns casos, essa não será uma solução prática, e você deve
 > sempre tentar migrar para versões com tag assim que possível.

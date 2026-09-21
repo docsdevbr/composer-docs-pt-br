@@ -6,33 +6,39 @@
 # The original work was translated from English into Brazilian Portuguese.
 # https://github.com/docsdevbr/composer-docs-pt-br/blob/-/LICENSES/MIT.txt
 
-tagline: Versions explained.
+source_url: https://github.com/composer/composer/blob/2.10.3/doc/articles/versions.md
+source_revision: c23beac9c508b701bb481d1c5269e7a2a79e0b60
+translation_status: ready
+
+tagline: Explicação das versões.
 ---
 
-# Versions and constraints
+# Versões e restrições
 
-## Composer Versions vs VCS Versions
+## Versões do Composer vs. versões do VCS
 
-Because Composer is heavily geared toward utilizing version control systems
-like git, the term "version" can be a little ambiguous. In the sense of a
-version control system, a "version" is a specific set of files that contain
-specific data. In git terminology, this is a "ref", or a specific commit,
-which may be represented by a branch HEAD or a tag. When you check out that
-version in your VCS -- for example, tag `v1.1` or commit `e35fa0d` --, you're
-asking for a single, known set of files, and you always get the same files back.
+Como o Composer é fortemente voltado para o uso de sistemas de controle de
+versão como o Git, o termo "versão" pode ser um pouco ambíguo.
+No contexto de um sistema de controle de versão, uma "versão" é um conjunto
+específico de arquivos que contém dados específicos.
+Na terminologia do Git, isso é uma "ref" (referência) ou um commit específico,
+que pode ser representado pelo HEAD de um branch ou por uma tag.
+Ao fazer o checkout dessa versão no seu VCS, por exemplo, a tag `v1.1` ou o
+commit `e35fa0d`, você está solicitando um conjunto único e conhecido de
+arquivos, e sempre obtém os mesmos arquivos de volta.
 
-In Composer, what's often referred to casually as a version -- that is,
-the string that follows the package name in a require line (e.g., `~1.1` or
-`1.2.*`) -- is actually more specifically a version constraint. Composer
-uses version constraints to figure out which refs in a VCS it should be
-checking out (or to verify that a given library is acceptable in
-the case of a statically-maintained library with a `version` specification
-in `composer.json`).
+No Composer, o que é frequentemente chamado de forma casual de versão, isto é, a
+string que segue o nome do pacote em uma linha `require` (ex.: `~1.1` ou
+`1.2.*`) é, na verdade, mais especificamente uma restrição de versão.
+O Composer utiliza restrições de versão para determinar quais refs em um VCS
+devem ser baixadas via checkout (ou para verificar se uma determinada biblioteca
+é aceitável, no caso de uma biblioteca mantida estaticamente que possua uma
+especificação de `version` no arquivo `composer.json`).
 
-## VCS Tags and Branches
+## Tags e branches do VCS
 
-*For the following discussion, let's assume the following sample library
-repository:*
+*Para a discussão a seguir, vamos assumir o seguinte repositório de biblioteca
+de exemplo:*
 
 ```shell
 ~/my-library$ git branch
@@ -65,160 +71,213 @@ v2.0.2
 
 ### Tags
 
-Normally, Composer deals with tags (as opposed to branches -- if you don't
-know what this means, read up on
-[version control systems](https://en.wikipedia.org/wiki/Version_control#Common_terminology)).
-When you write a version constraint, it may reference a specific tag (e.g.,
-`1.1`) or it may reference a valid range of tags (e.g., `>=1.1 <2.0`, or
-`~4.0`). To resolve these constraints, Composer first asks the VCS to list
-all available tags, then creates an internal list of available versions based
-on these tags. In the above example, composer's internal list includes versions
-`1.0`, `1.0.1`, `1.0.2`, the beta release of `1.1`, the first and second
-release candidates of `1.1`, the final release version `1.1`, etc.... (Note
-that Composer automatically removes the 'v' prefix in the actual tagname to
-get a valid final version number.)
+Normalmente, o Composer lida com tags, ao contrário de branches (se você não
+sabe o que isso significa, informe-se sobre
+[sistemas de controle de versão](https://en.wikipedia.org/wiki/Version_control#Common_terminology)).
+Ao definir uma restrição de versão, ela pode referenciar uma tag específica (por
+exemplo, `1.1`) ou um intervalo válido de tags (por exemplo, `>=1.1 <2.0` ou
+`~4.0`).
+Para resolver essas restrições, o Composer primeiro solicita ao VCS que liste
+todas as tags disponíveis e, em seguida, cria uma lista interna de versões
+disponíveis com base nessas tags.
+No exemplo acima, a lista interna do Composer inclui as versões `1.0`, `1.0.1`,
+`1.0.2`, a versão beta da `1.1`, as primeira e segunda versões candidatas da
+`1.1`, a versão final `1.1`, etc.
+(Observe que o Composer remove automaticamente o prefixo 'v' do nome da tag
+original para obter um número de versão final válido.)
 
-When Composer has a complete list of available versions from your VCS, it then
-finds the highest version that matches all version constraints in your project
-(it's possible that other packages require more specific versions of the
-library than you do, so the version it chooses may not always be the highest
-available version) and it downloads a zip archive of that tag to unpack in the
-correct location in your `vendor` directory.
+Quando o Composer possui a lista completa de versões disponíveis do seu VCS, ele
+identifica a versão mais recente que atende a todas as restrições de versão do
+seu projeto (é possível que outros pacotes exijam versões da biblioteca mais
+específicas do que a sua; portanto, a versão escolhida nem sempre será a versão
+mais recente disponível) e baixa um arquivo zip dessa tag para descompactá-lo no
+local correto dentro do seu diretório `vendor`.
 
 ### Branches
 
-If you want Composer to check out a branch instead of a tag, you need to point it to the branch using the special `dev-*` prefix (or sometimes suffix; see below). If you're checking out a branch, it's assumed that you want to *work* on the branch and Composer actually clones the repo into the correct place in your `vendor` directory. For tags, it copies the right files without actually cloning the repo. (You can modify this behavior with --prefer-source and --prefer-dist, see [install options](../03-cli.md#install).)
+Se você quiser que o Composer faça o checkout de um branch em vez de uma tag, é
+preciso indicá-lo usando o prefixo especial `dev-*` (ou, às vezes, um sufixo;
+veja abaixo).
+Ao obter um branch, assume-se que você deseja *trabalhar* nele; por isso, o
+Composer clona realmente o repositório no local correto dentro do seu diretório
+`vendor`.
+Já para tags, ele copia apenas os arquivos necessários, sem clonar o repositório
+inteiro.
+(Você pode alterar esse comportamento com `--prefer-source` e `--prefer-dist`;
+consulte as [opções de instalação](../03-cli.md#install).)
 
-In the above example, if you wanted to check out the `my-feature` branch, you would specify `dev-my-feature` as the version constraint in your `require` clause. This would result in Composer cloning the `my-library` repository into my `vendor` directory and checking out the `my-feature` branch.
+No exemplo acima, se você quisesse obter o branch `my-feature`, deveria
+especificar `dev-my-feature` como a restrição de versão na cláusula `require`.
+Isso faria com que o Composer clonasse o repositório `my-library` no seu
+diretório `vendor` e realizasse o checkout do branch `my-feature`.
 
-When branch names look like versions, we have to clarify for Composer that we're trying to check out a branch and not a tag. In the above example, we have two version branches: `v1` and `v2`. To get Composer to check out one of these branches, you must specify a version constraint that looks like this: `v1.x-dev`. The `.x` is an arbitrary string that Composer requires to tell it that we're talking about the `v1` branch and not a `v1` tag (alternatively, you can name the branch `v1.x` instead of `v1`). In the case of a branch with a version-like name (`v1`, in this case), you append `-dev` as a suffix, rather than using `dev-` as a prefix.
+Quando os nomes dos branches se assemelham a versões, é preciso deixar claro
+para o Composer que estamos tentando obter um branch, e não uma tag.
+No exemplo acima, temos dois branches de versão: `v1` e `v2`.
+Para fazer com que o Composer obtenha um desses branches, você deve especificar
+uma restrição de versão como esta: `v1.x-dev`.
+O `.x` é uma string arbitrária exigida pelo Composer para indicar que estamos
+nos referindo ao branch `v1` e não a uma tag `v1` (alternativamente, você pode
+nomear o branch como `v1.x` em vez de `v1`).
+No caso de um branch com um nome que lembra uma versão (como `v1`, neste
+exemplo), adiciona-se `-dev` como sufixo, em vez de usar `dev-` como prefixo.
 
-### Stabilities
+### Níveis de estabilidade
 
-Composer recognizes the following stabilities (in order of stability): dev,
-alpha, beta, RC, and stable where RC stands for release candidate. The stability
-of a version is defined by its suffix e.g version `v1.1-BETA` has a stability of
-`beta` and `v1.1-RC1` has a stability of `RC`. If such a suffix is missing
-e.g. version `v1.1` then Composer considers that version `stable`. In addition
-to that Composer automatically adds a `-dev` suffix to all numeric branches and
-prefixes all other branches imported from a VCS repository with `dev-`. In both
-cases the stability `dev` gets assigned.
+O Composer reconhece os seguintes níveis de estabilidade (em ordem de
+estabilidade): `dev`, `alpha`, `beta`, `RC` e `stable` (sendo que `RC` significa
+release candidate).
+A estabilidade de uma versão é definida pelo seu sufixo; por exemplo, a versão
+`v1.1-BETA` tem estabilidade `beta` e a `v1.1-RC1` tem estabilidade `RC`.
+Se tal sufixo estiver ausente, como na versão `v1.1`, o Composer considera essa
+versão como `stable`.
+Além disso, o Composer adiciona automaticamente o sufixo `-dev` a todos os
+branches numéricos e prefixa todos os outros branches importados de um
+repositório VCS com `dev-`.
+Em ambos os casos, é atribuída a estabilidade `dev`.
 
-Keeping this in mind will help you in the next section.
+Ter isso em mente ajudará você na próxima seção.
 
-### Minimum Stability
+### Estabilidade mínima
 
-There's one more thing that will affect which files are checked out of a library's VCS and added to your project: Composer allows you to specify stability constraints to limit which tags are considered valid. In the above example, note that the library released a beta and two release candidates for version `1.1` before the final official release. To receive these versions when running `composer install` or `composer update`, we have to explicitly tell Composer that we are ok with release candidates and beta releases (and alpha releases, if we want those). This can be done using either a project-wide `minimum-stability` value in `composer.json` or using "stability flags" in version constraints. Read more on the [schema page](../04-schema.md#minimum-stability).
+Há mais um fator que influencia quais arquivos são extraídos do VCS de uma
+biblioteca e adicionados ao seu projeto: o Composer permite definir restrições
+de estabilidade para limitar quais tags são consideradas válidas.
+No exemplo acima, observe que a biblioteca lançou uma versão beta e duas release
+candidates para a versão `1.1` antes do lançamento oficial final.
+Para obter essas versões ao executar `composer install` ou `composer update`,
+precisamos informar explicitamente ao Composer que aceitamos release candidates
+e versões beta (além de versões alpha, caso desejemos).
+Isso pode ser feito definindo um valor `minimum-stability` para todo o projeto
+no arquivo `composer.json` ou utilizando "flags de estabilidade" nas restrições
+de versão.
+Leia mais na [página do esquema](../04-schema.md#minimum-stability).
 
-## Writing Version Constraints
+## Definindo restrições de versão
 
-Now that you have an idea of how Composer sees versions, let's talk about how
-to specify version constraints for your project dependencies.
+Agora que você tem uma noção de como o Composer interpreta as versões, vamos
+falar sobre como definir restrições de versão para as dependências do seu
+projeto.
 
-### Exact Version Constraint
+### Restrição de versão exata
 
-You can specify the exact version of a package. This will tell Composer to
-install this version and this version only. If other dependencies require
-a different version, the solver will ultimately fail and abort any install
-or update procedures.
+Você pode especificar a versão exata de um pacote.
+Isso instrui o Composer a instalar apenas essa versão específica.
+Se outras dependências exigirem uma versão diferente, o resolvedor de
+dependências falhará e interromperá qualquer procedimento de instalação ou
+atualização.
 
-Example: `1.0.2`
+Exemplo: `1.0.2`
 
-### Version Range
+### Intervalo de versões
 
-By using comparison operators you can specify ranges of valid versions. Valid
-operators are `>`, `>=`, `<`, `<=`, `!=`.
+Ao utilizar operadores de comparação, você pode especificar intervalos de
+versões válidas.
+Os operadores válidos são `>`, `>=`, `<`, `<=`, `!=`.
 
-You can define multiple ranges. Ranges separated by a space (<code>&nbsp;</code>)
-or comma (`,`) will be treated as a **logical AND**. A double pipe (`||`)
-will be treated as a **logical OR**. AND has higher precedence than OR.
+Você pode definir múltiplos intervalos.
+Intervalos separados por um espaço (<code>&nbsp;</code>) ou vírgula (`,`) serão
+tratados como um **E lógico**.
+Uma barra dupla (`||`) será tratada como um **OU lógico**.
+O operador E tem precedência sobre o OU.
 
-> **Note:** Be careful when using unbounded ranges as you might end up
-> unexpectedly installing versions that break backwards compatibility.
-> Consider using the [caret](#caret-version-range-) operator instead for safety.
+> **Nota:** Tenha cuidado ao usar intervalos sem limite superior, pois você pode
+> acabar instalando inesperadamente versões que quebram a compatibilidade com
+> versões anteriores.
+> Considere usar o operador [circunflexo](#caret-version-range-) em vez disso,
+> por segurança.
 
-<!--blank line followed by comment markup to separate the block quotes-->
-> **Note:** In older versions of Composer the single pipe (`|`) was the
-> recommended alternative to the **logical OR**. Thus for backwards compatibility
-> the single pipe (`|`) will still be treated as a **logical OR**.
+> **Nota:** Em versões mais antigas do Composer, a barra simples (`|`) era a
+> alternativa recomendada para o **OU lógico** (OR).
+> Portanto, para manter a compatibilidade com versões anteriores, a barra
+> simples (`|`) ainda será tratada como um **OU lógico**.
 
-Examples:
+Exemplos:
 
 * `>=1.0`
 * `>=1.0 <2.0`
 * `>=1.0 <1.1 || >=1.2`
 
-### Hyphenated Version Range (` - `)
+### Intervalo de versões com hífen (` - `)
 
-Inclusive set of versions. Partial versions on the right include are completed
-with a wildcard. For example `1.0 - 2.0` is equivalent to `>=1.0.0 <2.1` as the
-`2.0` becomes `2.0.*`. On the other hand `1.0.0 - 2.1.0` is equivalent to
-`>=1.0.0 <=2.1.0`.
+Um intervalo inclusivo de versões.
+Versões parciais à direita são completadas com um caractere curinga.
+Por exemplo, `1.0 - 2.0` equivale a `>=1.0.0 <2.1`, pois `2.0` torna-se `2.0.*`.
+Por outro lado, `1.0.0 - 2.1.0` equivale a `>=1.0.0 <=2.1.0`.
 
-Example: `1.0 - 2.0`
+Exemplo: `1.0 - 2.0`
 
-### Wildcard Version Range (`.*`)
+### Intervalo de versões com curinga (`.*`)
 
-You can specify a pattern with a `*` wildcard. `1.0.*` is the equivalent of
+Você pode especificar um padrão usando o curinga `*`. `1.0.*` equivale a
 `>=1.0 <1.1`.
 
-Example: `1.0.*`
+Exemplo: `1.0.*`
 
-## Next Significant Release Operators
+## Operadores de próxima versão significativa
 
-### Tilde Version Range (`~`)
+### Operador de intervalo de versão til (`~`)
 
-The `~` operator is best explained by example: `~1.2` is equivalent to
-`>=1.2 <2.0.0`, while `~1.2.3` is equivalent to `>=1.2.3 <1.3.0`. As you can see
-it is mostly useful for projects respecting [semantic
-versioning](https://semver.org/). A common usage would be to mark the minimum
-minor version you depend on, like `~1.2` (which allows anything up to, but not
-including, 2.0). Since in theory there should be no backwards compatibility
-breaks until 2.0, that works well. Another way of looking at it is that using
-`~` specifies a minimum version, but allows the last digit specified to go up.
+O operador `~` é melhor explicado por exemplos: `~1.2` é equivalente a
+`>=1.2 <2.0.0`, enquanto `~1.2.3` é equivalente a `>=1.2.3 <1.3.0`.
+Como você pode ver, ele é especialmente útil para projetos que seguem o
+[versionamento semântico](https://semver.org/).
+Um uso comum seria definir a versão secundária mínima da qual você depende, como
+`~1.2` (o que permite qualquer versão até, mas não incluindo, a 2.0).
+Visto que, em teoria, não deve haver quebras de compatibilidade retroativa até a
+versão 2.0, isso funciona bem.
+Outra forma de entender isso é que o uso de `~` especifica uma versão mínima,
+mas permite que o último dígito especificado aumente.
 
-Example: `~1.2`
+Exemplo: `~1.2`
 
-> **Note:** Although `2.0-beta.1` is strictly before `2.0`, a version constraint
-> like `~1.2` would not install it. As said above `~1.2` only means the `.2`
-> can change but the `1.` part is fixed.
+> **Nota:** Embora `2.0-beta.1` seja estritamente anterior a `2.0`, uma
+> restrição de versão como `~1.2` não a instalaria.
+> Como mencionado acima, `~1.2` significa apenas que a parte `.2` pode mudar,
+> mas a parte `1.` permanece fixa.
 
-> **Note:** The `~` operator has an exception on its behavior for the major
-> release number. This means for example that `~1` is the same as `~1.0` as
-> it will not allow the major number to increase trying to keep backwards
-> compatibility.
+> **Nota:** O operador `~` possui uma exceção em seu comportamento em relação ao
+> número da versão principal.
+> Isso significa, por exemplo, que `~1` é o mesmo que `~1.0`, pois ele não
+> permite que o número número da versão principal aumente, buscando manter a
+> compatibilidade retroativa.
 
-### Caret Version Range (`^`)
+### Intervalo de versão com circunflexo (`^`)
 
-The `^` operator behaves very similarly, but it sticks closer to semantic
-versioning, and will always allow non-breaking updates. For example `^1.2.3`
-is equivalent to `>=1.2.3 <2.0.0` as none of the releases until 2.0 should
-break backwards compatibility. For pre-1.0 versions it also acts with safety
-in mind and treats `^0.3` as `>=0.3.0 <0.4.0` and `^0.0.3` as `>=0.0.3 <0.0.4`.
+O operador `^` comporta-se de maneira muito semelhante, mas segue mais
+rigorosamente o versionamento semântico, permitindo sempre atualizações que não
+quebram a compatibilidade.
+Por exemplo, `^1.2.3` é equivalente a `>=1.2.3 <2.0.0`, uma vez que nenhum dos
+lançamentos anteriores à versão 2.0 deve quebrar a compatibilidade com versões
+anteriores.
+Para versões anteriores à 1.0, ele também prioriza a segurança, tratando `^0.3`
+como `>=0.3.0 <0.4.0` e `^0.0.3` como `>=0.0.3 <0.0.4`.
 
-This is the recommended operator for maximum interoperability when writing
-library code.
+Este é o operador recomendado para garantir a máxima interoperabilidade ao
+escrever código de bibliotecas.
 
-Example: `^1.2.3`
+Exemplo: `^1.2.3`
 
-> **Note:** If you are using PowerShell on Windows, you have to escape
-> carets when using them as argument on the CLI for example when using the
-> `composer require` command. You have to use four
-> subsequent caret operators, e.g. `^^^^1.2.3`, to ensure the caret operator gets
-> passed to Composer correctly.
+> **Nota:** Se você estiver usando o PowerShell no Windows, precisará escapar
+> os caracteres de circunflexo (`^`) ao utilizá-los como argumento na CLI, por
+> exemplo, ao usar o comando `composer require`.
+> É necessário usar quatro caracteres de circunflexo consecutivos, como
+> `^^^^1.2.3`, para garantir que o operador seja passado corretamente para o
+> Composer.
 
-## Stability Constraints
+## Restrições de estabilidade
 
-If you are using a constraint that does not explicitly define a stability,
-Composer will default internally to `-dev` or `-stable`, depending on the
-operator(s) used. This happens transparently.
+Se você estiver usando uma restrição que não define explicitamente uma
+estabilidade, o Composer adotará internamente o padrão `-dev` ou `-stable`,
+dependendo dos operadores utilizados.
+Isso ocorre de forma transparente.
 
-If you wish to explicitly consider only the stable release in the comparison,
-add the suffix `-stable`.
+Se você quiser considerar explicitamente apenas a versão estável na comparação,
+adicione o sufixo `-stable`.
 
-Examples:
+Exemplos:
 
- Constraint         | Internally
+Restrição           | Internamente
 ------------------- | ------------------------
  `1.2.3`            | `=1.2.3.0-stable`
  `>1.2`             | `>1.2.0.0-stable`
@@ -230,14 +289,17 @@ Examples:
  `~1.3`             | `>=1.3.0.0-dev <2.0.0.0-dev`
  `1.4.*`            | `>=1.4.0.0-dev <1.5.0.0-dev`
 
-To allow various stabilities without enforcing them at the constraint level
-however, you may use [stability-flags](../04-schema.md#package-links) like
-`@<stability>` (e.g. `@dev`) to let Composer know that a given package
-can be installed in a different stability than your default minimum-stability
-setting. All available stability flags are listed on the minimum-stability
-section of the [schema page](../04-schema.md#minimum-stability).
+Para permitir diferentes níveis de estabilidade sem impô-los no nível da
+restrição, você pode usar
+[flags de estabilidade](../04-schema.md#links-de-pacotes), como `@<stability>`
+(por exemplo, `@dev`), para informar ao Composer que um determinado pacote pode
+ser instalado com um nível de estabilidade diferente da sua configuração padrão
+de `minimum-stability`.
+Todas as flags de estabilidade disponíveis estão listadas na seção
+`minimum-stability` da [página do esquema](../04-schema.md#minimum-stability).
 
-## Summary
+## Resumo
+
 ```jsonc
 "require": {
     "vendor/package": "1.3.2", // exactly 1.3.2
@@ -259,9 +321,11 @@ section of the [schema page](../04-schema.md#minimum-stability).
 }
 ```
 
-## Testing Version Constraints
+## Testando restrições de versão
 
-You can test version constraints using [semver.madewithlove.com](https://semver.madewithlove.com).
-Fill in a package name and it will autofill the default version constraint
-which Composer would add to your `composer.json` file. You can adjust the
-version constraint and the tool will highlight all releases that match.
+Você pode testar restrições de versão usando o
+[semver.madewithlove.com](https://semver.madewithlove.com).
+Insira o nome de um pacote e a ferramenta preencherá automaticamente a restrição
+de versão padrão que o Composer adicionaria ao seu arquivo `composer.json`.
+Você pode ajustar a restrição de versão, e a ferramenta destacará todas as
+versões lançadas que atendem a esse critério.

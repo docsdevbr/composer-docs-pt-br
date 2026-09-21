@@ -62,7 +62,7 @@ Por exemplo, um branch `1.x` ou `1.x-dev` poderia ter seu alias alterado de
 
 O alias deve ser uma versão de desenvolvimento comparável (você não pode definir
 um alias de `dev-main` para `dev-master`, por exemplo), e o `branch-alias` deve
-estar presente na branch à qual ele faz referência.
+estar presente no branch à qual ele faz referência.
 Para criar um alias para `dev-main`, você precisa defini-lo e fazer o commit na
 branch `main`.
 
@@ -127,7 +127,7 @@ um alias para `1.0.x-dev`.
 > A parte à esquerda de `as` é descartada.
 > Consequentemente, se A requer B e B requer `monolog/monolog` na versão
 > `dev-bugfix as 1.0.x-dev`, a instalação de A fará com que B requeira
-> `1.0.x-dev`, que pode existir como um alias de branch ou como uma branch `1.0`
+> `1.0.x-dev`, que pode existir como um alias de branch ou como um branch `1.0`
 > real.
 > Se não existir, o alias em linha deverá ser definido novamente no
 > `composer.json` de A.

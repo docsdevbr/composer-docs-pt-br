@@ -101,7 +101,7 @@ a ser utilizada em vez da anterior.
 A escolha correta das [restrições de versão](../articles/versions.md) e a
 garantia de que os pacotes sigam o
 [versionamento semântico](https://semver.org/) ao utilizar
-[operadores de próxima versão significativa](versions.md#next-significant-release-operators)
+[operadores de próxima versão significativa](versions.md#operadores-de-próxima-versão-significativa)
 devem assegurar que o merge de branches não cause falhas devido à atualização
 acidental de uma dependência.
 
@@ -140,7 +140,7 @@ anteriores foram perdidas.
 Se todas as suas dependências seguirem o
 [versionamento semântico](https://semver.org/) e suas
 [restrições de versão](../articles/versions.md) utilizarem
-[operadores de próxima versão significativa](versions.md#next-significant-release-operators),
+[operadores de próxima versão significativa](versions.md#operadores-de-próxima-versão-significativa),
 isso não deve ser um problema; caso contrário, você poderá quebrar sua aplicação
 inadvertidamente.
 
